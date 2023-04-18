@@ -98,7 +98,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     @Override
     public void run() {
         gameMath math1 = new gameMath();
-        math1.CartesianGetter(cartesian.x,cartesian.y);
+        math1.setPolar(cartesian.x,cartesian.y);
         running = true;
         frameRate.initialize();
         while (running) {
@@ -219,10 +219,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-                polar.addTheta(0.1);
+                polar.addTheta(2);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
-                System.out.println(polar.radius+polar.theta);
             }
         }
         graphics.setColor(Color.CYAN);
