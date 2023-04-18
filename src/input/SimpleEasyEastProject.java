@@ -31,10 +31,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private KeyboardInput keyboard;
     private CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
     private PolarCoordinate polar = new PolarCoordinate(30,50);
-    BufferedImage image = ImageIO.read(new File("E:/code/javagame/src/image/crystal.png"));
-    BufferedImage bullet = ImageIO.read(new File("E:/code/javagame/src/image/bullet.png"));
-    BufferedImage bullet2 = ImageIO.read(new File("E:/code/javagame/src/image/bullet2.png"));
-    Image icon = ImageIO.read(new File("E:/code/javagame/src/image/happy.png"));
+    BufferedImage image = ImageIO.read(new File("src/image/crystal.png"));
+    BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
+    BufferedImage bullet2 = ImageIO.read(new File("src/image/bullet2.png"));
+    Image icon = ImageIO.read(new File("src/image/happy.png"));
     Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<Point> lines2 = new ArrayList<>();
