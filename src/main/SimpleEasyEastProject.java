@@ -149,6 +149,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
+            lines2.clear();
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_S ) ) {
             doSize = !doSize;
@@ -221,17 +222,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 }
             }
         }
-        for (int i = 0; i < lines.size() - 1 ; i++) {
+        for (int i = 0; i < lines2.size() - 1 ; i++) {
             Point p = lines2.get(i);
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
                 polar.addTheta(2);
+                polar.addRadius(1);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
-                if ( p.getY() <= 0 ) {
-                    lines2.remove(i);
-                }
             }
         }
         graphics.setColor(Color.CYAN);
