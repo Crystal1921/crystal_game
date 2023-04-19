@@ -100,9 +100,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         gameMath math1 = new gameMath();
         math1.setPolar(cartesian.x,cartesian.y);
         running = true;
+        long curTime = System.nanoTime();
+        long lastTime = curTime;
+        double msPerFrame;
         frameRate.initialize();
         while (running) {
-            gameLoop();
+            curTime = System.nanoTime();
+            msPerFrame = (curTime - lastTime) / 1000000;
+            gameLoop( msPerFrame );//input ms
+            lastTime = curTime;
         }
     }
 
@@ -117,10 +123,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
     }
 
-    private void gameLoop() {
+    private void gameLoop(double delta) {
         processInput();
         renderFrame();
-        sleep(10L);
+        sleep((long)(50-delta));
         EmitterSpeed();
     }
 
@@ -164,6 +170,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
     private void sleep(long sleep) {
         try {
+            if ( sleep <= 0 ) sleep = 0;
             Thread.sleep(sleep);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -222,6 +229,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 polar.addTheta(2);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
+                if ( p.getY() <= 0 ) {
+                    lines2.remove(i);
+                }
             }
         }
         graphics.setColor(Color.CYAN);
