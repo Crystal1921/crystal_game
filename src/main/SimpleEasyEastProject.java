@@ -2,7 +2,6 @@ package main;
 
 import org.jetbrains.annotations.NotNull;
 import util.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -141,10 +140,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         if ( mouse.buttonDown(MouseEvent.BUTTON1) && (emitter == 0) ) {
             lines.add( mouse.getPosition() );
-            lines2.add( mouse.getPosition() );
         } else if ( drawingLine ) {
             lines.add( null );
-            lines2.add( null );
             drawingLine = false;
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
@@ -161,7 +158,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
         }
     }
-
 
     private void EmitterSpeed () {
         emitter++;
@@ -199,6 +195,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private void render(Graphics2D graphics) {
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
+        if (emitter == 0) lines2.add(new Point((int) cartesian.x, (int) cartesian.y));
         health_proportion = 1 - hurt / health;
         Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.setColor(color);
@@ -227,8 +224,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-                polar.addTheta(2);
-                polar.addRadius(1);
+                polar.setTheta(60);
+                polar.addRadius(4);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
             }

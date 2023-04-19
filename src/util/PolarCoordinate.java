@@ -13,6 +13,12 @@ public class PolarCoordinate {
     public void addRadius(double delta) {
         this.radius = this.radius + delta;
     }
+    public void setTheta (double theta) {
+        this.theta = theta;
+    }
+    public void setRadius (double radius) {
+        this.radius = radius;
+    }
     public double getTheta() {
         return this.theta;
     }
