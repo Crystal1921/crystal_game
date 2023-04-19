@@ -1,4 +1,4 @@
-package input;
+package main;
 
 import org.jetbrains.annotations.NotNull;
 import util.*;
