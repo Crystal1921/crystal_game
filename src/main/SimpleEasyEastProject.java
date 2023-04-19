@@ -33,6 +33,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     BufferedImage image = ImageIO.read(new File("src/image/crystal.png"));
     BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
     BufferedImage bullet2 = ImageIO.read(new File("src/image/bullet2.png"));
+    BufferedImage Hakurei_Reimu = ImageIO.read(new File("src/image/Hakurei_Reimu_big.png"));
+    BufferedImage background = ImageIO.read(new File("src/image/background.png"));
     Image icon = ImageIO.read(new File("src/image/happy.png"));
     Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     private ArrayList<Point> lines = new ArrayList<>();
@@ -125,7 +127,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private void gameLoop(double delta) {
         processInput();
         renderFrame();
-        sleep((long)(50-delta));
+        sleep((long)(40-delta));
         EmitterSpeed();
     }
 
@@ -193,6 +195,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     private void render(Graphics2D graphics) {
+        graphics.drawImage(background,0,0,this);
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
         if (emitter == 0) lines2.add(new Point((int) cartesian.x, (int) cartesian.y));
@@ -202,16 +205,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         frameRate.calculate();
         graphics.setFont(font1);
         graphics.drawString(frameRate.getFrameRate(),30,30);
-        graphics.drawString("Use Mouse to draw lines",30,45);
-        graphics.drawString("Press C to clear lines",30,60);
-        graphics.drawString("Mouse Wheel cycle colors",30,75);
-        graphics.drawString(mouse.toString(),30,90);
         for (int i = 0; i < lines.size() - 1; ++i) {
             Point p = lines.get(i);
             if ( !(p == null) ) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY()-4);
-                if (p.getX() <= (260 + 180 * health_proportion) && p.getX() >= 260 && p.getY() <= 85 && p.getY() >= 65 ) {
+                if ( p.getX() >= (cartesian.x - Hakurei_Reimu.getWidth() / 2) && p.getX() <= (cartesian.x + Hakurei_Reimu.getWidth() / 2) && p.getY() >= (cartesian.y - Hakurei_Reimu.getHeight() / 2) && p.getY() <= (cartesian.y + Hakurei_Reimu.getHeight() / 2)) {
                     if ( !doGameOver ) hurt++;
                 }
                 if ( p.getY() <= 0 ) {
@@ -224,18 +223,21 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-                polar.setTheta(60);
+                polar.addTheta(1);
                 polar.addRadius(4);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
+                if ( p.getY() <= 0 ) {
+                    lines2.remove(i);
+                }
             }
         }
         graphics.setColor(Color.CYAN);
-        graphics.drawString(String.format("%.1f%%",(health_proportion * 100)),300,105);
-        graphics.drawRoundRect(250,60,200,30,5,5);
-        graphics.fillRect(260,65,(int)Math.floor(180 * health_proportion),20);
-        graphics.drawLine(250,90,400,90);
+        graphics.drawString(String.format("%.1f%%",(health_proportion * 100)),400,85);
+        graphics.drawRoundRect(250,30,200,30,5,5);
+        graphics.fillRect(260,35,(int)Math.floor(180 * health_proportion),20);
         graphics.drawImage(image,(int)mouse.getPosition().getX() - image.getHeight() / 2,(int)mouse.getPosition().getY() - image.getWidth() / 2,this);
+        graphics.drawImage(Hakurei_Reimu,(int)cartesian.x - Hakurei_Reimu.getHeight() / 2,(int)cartesian.y - Hakurei_Reimu.getHeight() / 2,this);
     }
 
     protected void onWindowClosing() {
