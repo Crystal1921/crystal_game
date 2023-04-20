@@ -19,6 +19,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import static util.gameMath.*;
+
 @SuppressWarnings("ALL")
 public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener {
 
@@ -46,6 +48,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private int colorIndex;
     private int size = 2;
     private int emitter = 0;
+    final private int width = 640;
+    final private int height = 480;
     private final double health = 500;
     private double hurt = 0;
     private double health_proportion;
@@ -74,7 +78,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
         Canvas canvas = new Canvas();
-        canvas.setSize(640,480);
+        canvas.setSize(width,height);
         canvas.setBackground(Color.BLACK);
         canvas.setIgnoreRepaint(true);
         getContentPane().add(canvas,BorderLayout.CENTER);
@@ -167,6 +171,17 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             emitter = 0 ;
         }
     }
+
+    private void RoundEmitter (int n) {
+        int angle = 360 / n;
+        if (emitter == 0) {
+            for (int i = 0; i < n; i++) {
+                PolarCoordinate polar1 = new PolarCoordinate(angle * i ,10);
+                CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta,polar1.radius);
+                lines2.add( new Point((int)cartesian1.x,(int)cartesian1.y) );
+            }
+        }
+    }
     private void sleep(long sleep) {
         try {
             if ( sleep <= 0 ) sleep = 0;
@@ -198,7 +213,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         graphics.drawImage(background,0,0,this);
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
-        if (emitter == 0) lines2.add(new Point((int) cartesian.x, (int) cartesian.y));
+        RoundEmitter(25);
         health_proportion = 1 - hurt / health;
         Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.setColor(color);
@@ -213,7 +228,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 if ( p.getX() >= (cartesian.x - Hakurei_Reimu.getWidth() / 2) && p.getX() <= (cartesian.x + Hakurei_Reimu.getWidth() / 2) && p.getY() >= (cartesian.y - Hakurei_Reimu.getHeight() / 2) && p.getY() <= (cartesian.y + Hakurei_Reimu.getHeight() / 2)) {
                     if ( !doGameOver ) hurt++;
                 }
-                if ( p.getY() <= 0 ) {
+                if ( isOutFrame(width,height,p) ) {
                     lines.remove(i);
                 }
             }
@@ -223,11 +238,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-                polar.addTheta(1);
+                polar.addTheta(0.5);
                 polar.addRadius(4);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setLocation(cartesian1.getX(),cartesian1.getY());
-                if ( p.getY() <= 0 ) {
+                if ( isOutFrame(width,height,p) ) {
                     lines2.remove(i);
                 }
             }

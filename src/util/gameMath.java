@@ -1,5 +1,7 @@
 package util;
 
+import java.awt.*;
+
 public class gameMath {
     private static double polarX;
     private static double polarY;
@@ -25,5 +27,9 @@ public class gameMath {
         double x = radius * Math.cos(Math.toRadians(theta)) + polarX;
         double y = radius * Math.sin(Math.toRadians(theta)) + polarY;
         return new CartesianCoordinate(x, y);
+    }
+
+    public static boolean isOutFrame (int width, int height, Point point) {
+        return point.x <= 0 || point.y <= 0 || point.x >= width || point.y >= height;
     }
 }
