@@ -102,6 +102,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         canvas.requestFocus();
         gameThread = new Thread(this);
         gameThread.start();
+        setFilename("src/sound/Eternal_Night.mp3");
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
     }
