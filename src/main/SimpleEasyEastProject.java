@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static util.gameMath.*;
+import static util.MP3Player.*;
 
 @SuppressWarnings("ALL")
 public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener {
