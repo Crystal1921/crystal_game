@@ -28,11 +28,21 @@ public class MP3Player {
     }
     public static void main(String[] args) {
         try {
-            MP3Player player = new MP3Player("src/sound/test.mp3");
+            MP3Player player = new MP3Player("src/sound/Eternal_Night.mp3");
             player.play();
         } catch (FileNotFoundException | JavaLayerException e) {
             e.printStackTrace();
         }
     }
 
+    public static class MusicThread implements Runnable {
+        public void run() {
+            try {
+                MP3Player player = new MP3Player("src/sound/Eternal_Night.mp3");
+                player.play();
+            } catch (FileNotFoundException | JavaLayerException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

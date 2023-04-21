@@ -30,6 +30,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private Thread gameThread;
     private Thread move;
     private Thread backgroundmusic;
+    MP3Player.MusicThread musicThread = new MP3Player.MusicThread();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     private CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
@@ -100,6 +101,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         canvas.requestFocus();
         gameThread = new Thread(this);
         gameThread.start();
+        backgroundmusic = new Thread(musicThread);
+        backgroundmusic.start();
     }
 
     @Override
