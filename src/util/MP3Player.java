@@ -9,12 +9,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class MP3Player {
-    private String filename;
+    private static String musicfilename;
     private AdvancedPlayer player;
     private AudioDevice audioDevice;
 
     public MP3Player(String filename) throws FileNotFoundException, JavaLayerException {
-        this.filename = filename;
+        this.musicfilename = filename;
         FileInputStream fis = new FileInputStream(filename);
         player = new AdvancedPlayer(fis, FactoryRegistry.systemRegistry().createAudioDevice());
     }
@@ -23,8 +23,8 @@ public class MP3Player {
         player.play();
     }
 
-    public void setFilename (String filename) {
-        this.filename = filename;
+    public static void setFilename (String file) {
+        musicfilename = file;
     }
 
     public void stop() {
@@ -42,7 +42,7 @@ public class MP3Player {
     public static class MusicThread implements Runnable {
         public void run() {
             try {
-                MP3Player player = new MP3Player("src/sound/Eternal_Night.mp3");
+                MP3Player player = new MP3Player(musicfilename);
                 player.play();
             } catch (FileNotFoundException | JavaLayerException e) {
                 e.printStackTrace();
