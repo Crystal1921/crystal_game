@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class MyPanel extends JPanel {
-    BufferedImage image = ImageIO.read(new File("E:/code/javagame/src/image/crystal.png"));
+    BufferedImage image = ImageIO.read(new File("src/image/crystal.png"));
 
     public MyPanel() throws IOException {
     }

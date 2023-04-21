@@ -35,8 +35,8 @@ public class gameMath {
         return new CartesianCoordinate(x, y);
     }
 
-    public static boolean isOutFrame (int width, int height, @NotNull Point point) {
-        return point.x <= 0 || point.y <= 0 || point.x >= width || point.y >= height;
+    public static boolean isOutFrame (int width, int height, @NotNull CartesianCoordinate coordinate) {
+        return coordinate.x <= 0 || coordinate.y <= 0 || coordinate.x >= width || coordinate.y >= height;
     }
 
     public static boolean isOutImage (@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {
