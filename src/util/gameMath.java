@@ -1,6 +1,10 @@
 package util;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class gameMath {
     private static double polarX;
@@ -15,7 +19,8 @@ public class gameMath {
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
     }
 
-    public static PolarCoordinate Cartesian2Polar(double x, double y) {
+    @Contract("_, _ -> new")
+    public static @NotNull PolarCoordinate Cartesian2Polar(double x, double y) {
         double deltaX = x - polarX;
         double deltaY = y - polarY;
         double radius = distance(x, y, polarX, polarY);
@@ -23,13 +28,18 @@ public class gameMath {
         return new PolarCoordinate(theta, radius);
     }
 
-    public static CartesianCoordinate Polar2Cartesian(double theta, double radius) {
+    @Contract("_, _ -> new")
+    public static @NotNull CartesianCoordinate Polar2Cartesian(double theta, double radius) {
         double x = radius * Math.cos(Math.toRadians(theta)) + polarX;
         double y = radius * Math.sin(Math.toRadians(theta)) + polarY;
         return new CartesianCoordinate(x, y);
     }
 
-    public static boolean isOutFrame (int width, int height, Point point) {
+    public static boolean isOutFrame (int width, int height, @NotNull Point point) {
         return point.x <= 0 || point.y <= 0 || point.x >= width || point.y >= height;
+    }
+
+    public static boolean isOutImage (@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {
+        return (p.getX() >= (cartesian.x - image.getWidth() / 2) && p.getX() <= (cartesian.x + image.getWidth() / 2) && p.getY() >= (cartesian.y - image.getHeight() / 2) && p.getY() <= (cartesian.y + image.getHeight() / 2));
     }
 }

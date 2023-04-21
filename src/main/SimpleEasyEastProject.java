@@ -28,17 +28,19 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private BufferStrategy bs;
     private volatile boolean running;
     private Thread gameThread;
+    private Thread move;
+    private Thread backgroundmusic;
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     private CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
     private PolarCoordinate polar = new PolarCoordinate(30,50);
-    BufferedImage image = ImageIO.read(new File("src/image/crystal.png"));
-    BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
-    BufferedImage bullet2 = ImageIO.read(new File("src/image/bullet2.png"));
-    BufferedImage Hakurei_Reimu = ImageIO.read(new File("src/image/Hakurei_Reimu_big.png"));
-    BufferedImage background = ImageIO.read(new File("src/image/background.png"));
-    Image icon = ImageIO.read(new File("src/image/happy.png"));
-    Font font1 = new Font("微软雅黑", Font.PLAIN,12);
+    final BufferedImage image = ImageIO.read(new File("src/image/crystal.png"));
+    final BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
+    final BufferedImage bullet2 = ImageIO.read(new File("src/image/bullet2.png"));
+    final BufferedImage Hakurei_Reimu = ImageIO.read(new File("src/image/Hakurei_Reimu_big.png"));
+    final BufferedImage background = ImageIO.read(new File("src/image/background.png"));
+    final Image icon = ImageIO.read(new File("src/image/happy.png"));
+    final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<Point> lines2 = new ArrayList<>();
     private boolean drawingLine;
@@ -102,8 +104,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     @Override
     public void run() {
-        gameMath math1 = new gameMath();
-        math1.setPolar(cartesian.x,cartesian.y);
+        setPolar(cartesian.x,cartesian.y);
         running = true;
         long curTime = System.nanoTime();
         long lastTime = curTime;
@@ -176,7 +177,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         int angle = 360 / n;
         if (emitter == 0) {
             for (int i = 0; i < n; i++) {
-                PolarCoordinate polar1 = new PolarCoordinate(angle * i ,10);
+                PolarCoordinate polar1 = new PolarCoordinate(angle * i ,15);
                 CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta,polar1.radius);
                 lines2.add( new Point((int)cartesian1.x,(int)cartesian1.y) );
             }
@@ -209,11 +210,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         } while (bs.contentsLost());
     }
 
-    private void render(Graphics2D graphics) {
+    private void render(@NotNull Graphics2D graphics) {
         graphics.drawImage(background,0,0,this);
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
-        RoundEmitter(25);
+        RoundEmitter(15);
+        setPolar(cartesian.x,cartesian.y);
         health_proportion = 1 - hurt / health;
         Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.setColor(color);
@@ -225,7 +227,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY()-4);
-                if ( p.getX() >= (cartesian.x - Hakurei_Reimu.getWidth() / 2) && p.getX() <= (cartesian.x + Hakurei_Reimu.getWidth() / 2) && p.getY() >= (cartesian.y - Hakurei_Reimu.getHeight() / 2) && p.getY() <= (cartesian.y + Hakurei_Reimu.getHeight() / 2)) {
+                if ( isOutImage(Hakurei_Reimu,p,cartesian) ) {
                     if ( !doGameOver ) hurt++;
                 }
                 if ( isOutFrame(width,height,p) ) {
@@ -250,7 +252,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         graphics.setColor(Color.CYAN);
         graphics.drawString(String.format("%.1f%%",(health_proportion * 100)),400,85);
         graphics.drawRoundRect(250,30,200,30,5,5);
-        graphics.fillRect(260,35,(int)Math.floor(180 * health_proportion),20);
+        graphics.fillRoundRect(260,35,(int)Math.floor(180 * health_proportion),20,5,5);
         graphics.drawImage(image,(int)mouse.getPosition().getX() - image.getHeight() / 2,(int)mouse.getPosition().getY() - image.getWidth() / 2,this);
         graphics.drawImage(Hakurei_Reimu,(int)cartesian.x - Hakurei_Reimu.getHeight() / 2,(int)cartesian.y - Hakurei_Reimu.getHeight() / 2,this);
     }
@@ -267,7 +269,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     public static void main(String[] args) throws IOException {
         final SimpleEasyEastProject app = new SimpleEasyEastProject();
-
         app.setIconImage(app.icon);
         app.addWindowListener(new WindowAdapter() {
             @Override
