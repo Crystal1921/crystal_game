@@ -10,9 +10,13 @@ public class gameMath {
     private static double polarX;
     private static double polarY;
 
-    public static void setPolar(double polarX, double polarY) {
+    public static void setOrigin(double polarX, double polarY) {
         gameMath.polarX = polarX;
         gameMath.polarY = polarY;
+    }
+    public static void setOrigin(CartesianCoordinate coordinate) {
+        gameMath.polarX = coordinate.x;
+        gameMath.polarY = coordinate.y;
     }
 
     public static double distance(double x1, double y1, double x2, double y2) {

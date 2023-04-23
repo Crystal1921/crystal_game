@@ -31,10 +31,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private Thread gameThread;
     private Thread move;
     private Thread backgroundmusic;
-    MP3Player.MusicThread musicThread = new MP3Player.MusicThread();
+    private MP3Player.MusicThread musicThread = new MP3Player.MusicThread();
+    private moveThread moveThread = new moveThread();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
-    private CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
+    public static CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
     private PolarCoordinate polar = new PolarCoordinate(30,50);
     final BufferedImage image = ImageIO.read(new File("src/image/crystal_small.png"));
     final BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
@@ -45,16 +46,21 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<CartesianCoordinate> lines2 = new ArrayList<>();
+    private ArrayList<CartesianCoordinate> OriginPoint = new ArrayList<>();
     private boolean drawingLine;
     private boolean doColor = true;
     private boolean doSize = false;
     private boolean doGameOver = false;
     private int colorIndex;
     private int size = 2;
-    private int emitter = 0;
+    public static int emitter = 1;
+    public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
+    public static double RoundEmitterRotation = 1;
     private final double health = 100;
+    public static double addRadius = 4;
+    public static double addTheta = 0.5;
     private double rotation;
     private double hurt = 0;
     private double health_proportion;
@@ -106,11 +112,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         setFilename("src/sound/Eternal_Night.mp3");
         //backgroundmusic = new Thread(musicThread);
         //backgroundmusic.start();
+        move = new Thread(moveThread);
+        move.start();
     }
 
     @Override
     public void run() {
-        setPolar(cartesian.x,cartesian.y);
+        setOrigin(cartesian);
         running = true;
         long curTime = System.nanoTime();
         long lastTime = curTime;
@@ -160,6 +168,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
             lines2.clear();
+            OriginPoint.clear();
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_S ) ) {
             doSize = !doSize;
@@ -172,6 +181,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
     }
 
+    public static void setOriginPoint (CartesianCoordinate coordinate) {
+        cartesian = coordinate;
+    }
+
     private void EmitterSpeed () {
         emitter++;
         if ( emitter == 5 ) {
@@ -180,13 +193,16 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     private void RoundEmitter (int n, double theta) {
-        int angle = 360 / n;
-        rotation += theta;
-        if (emitter == 0) {
-            for (int i = 0; i < n; i++) {
-                PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation ,15);
-                CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta,polar1.radius);
-                lines2.add( cartesian1 );
+        if (n != 0) {
+            int angle = 360 / n;
+            rotation += theta;
+            if (emitter == 0) {
+                for (int i = 0; i < n; i++) {
+                    PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation, 15);
+                    CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta, polar1.radius);
+                    lines2.add(cartesian1);
+                    OriginPoint.add(cartesian);
+                }
             }
         }
     }
@@ -221,8 +237,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         graphics.drawImage(background,0,0,this);
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
-        RoundEmitter(15,1);
-        setPolar(cartesian.x,cartesian.y);
+        RoundEmitter(RoundEmitterNum,RoundEmitterRotation);
+        setOrigin(cartesian);
         health_proportion = 1 - hurt / health;
         Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.setColor(color);
@@ -234,11 +250,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY()-4);
-                if ( isOutImage(Hakurei_Reimu,p,cartesian) ) {
-                    if ( !doGameOver ) {
-                        hurt++;
-                        lines.remove(i);
-                    }
+                if (isOutImage(Hakurei_Reimu, p, cartesian) && !doGameOver) {
+                    hurt++;
+                    lines.remove(i);
                 }
                 if ( isOutFrame(width,height,new CartesianCoordinate(p.x,p.y)) ) {
                     lines.remove(i);
@@ -250,13 +264,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-                polar.addTheta(0.5);
-                polar.addRadius(4);
+                setOrigin(OriginPoint.get(i));
+                polar.addTheta(addTheta);
+                polar.addRadius(addRadius);
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setX(cartesian1.getX());
                 p.setY(cartesian1.getY());
                 if ( isOutFrame(width,height,cartesian1) ) {
                     lines2.remove(i);
+                    OriginPoint.remove(i);
                 }
             }
         }
