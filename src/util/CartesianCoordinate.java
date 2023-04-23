@@ -19,4 +19,14 @@ public class CartesianCoordinate {
     public void setY(double y) {
         this.y = y;
     }
+    public void addX(double x) {
+        this.x += x;
+    }
+    public void addY(double y) {
+        this.y += y;
+    }
+    @Override
+    public String toString() {
+        return "[x=" + x + ",y=" + y + "]";
+    }
 }
