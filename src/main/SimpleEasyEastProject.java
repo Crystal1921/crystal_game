@@ -7,10 +7,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,12 +18,14 @@ import java.util.ArrayList;
 
 import static util.gameMath.*;
 import static util.MP3Player.*;
+import util.MP3Player;
 
 @SuppressWarnings("ALL")
-public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener {
+public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener, ActionListener {
 
     private FrameRate frameRate;
     private BufferStrategy bs;
+    private JButton button;
     private volatile boolean running;
     private Thread gameThread;
     private Thread move;
@@ -57,12 +56,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
-    public static double RoundEmitterRotation = 1;
+    private int player_hur;
+    private double hurt = 0;
     private final double health = 100;
+    public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
     public static double addTheta = 0.5;
     private double rotation;
-    private double hurt = 0;
     private double health_proportion;
     private final Color[] COLORS = {
             Color.RED,
@@ -80,7 +80,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     gameMath math = new gameMath();
     protected void createAndShowGUI() {
-
+        JEditorPane editorPane1 = new JEditorPane();
+        editorPane1.setLayout(new FlowLayout());
+        editorPane1.setPreferredSize(new Dimension(width,40));
         JEditorPane editorPane = new JEditorPane();
         editorPane.setContentType("text/html");
         editorPane.setEditable(false);
@@ -88,12 +90,21 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         editorPane.addHyperlinkListener(this);
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
+        JButton button2 = new JButton("bgm off");
+        button2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                backgroundmusic.stop();
+            }
+        });
+        editorPane1.add(button2);
+
         Canvas canvas = new Canvas();
         canvas.setSize(width,height);
         canvas.setBackground(Color.BLACK);
         canvas.setIgnoreRepaint(true);
         getContentPane().add(canvas,BorderLayout.CENTER);
         getContentPane().add(scrollPane,BorderLayout.NORTH);
+        getContentPane().add(new JScrollPane(editorPane1), BorderLayout.SOUTH);
         setTitle("简易丐版东方小游戏");
         setIgnoreRepaint(true);
         pack();
@@ -110,8 +121,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         gameThread = new Thread(this);
         gameThread.start();
         setFilename("src/sound/Eternal_Night.mp3");
-        //backgroundmusic = new Thread(musicThread);
-        //backgroundmusic.start();
+        backgroundmusic = new Thread(musicThread);
+        backgroundmusic.start();
         move = new Thread(moveThread);
         move.start();
     }
@@ -304,5 +315,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         });
         SwingUtilities.invokeLater(app::createAndShowGUI);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
     }
 }
