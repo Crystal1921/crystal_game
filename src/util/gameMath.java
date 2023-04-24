@@ -38,15 +38,9 @@ public class gameMath {
         double y = radius * Math.sin(Math.toRadians(theta)) + polarY;
         return new CartesianCoordinate(x, y);
     }
-<<<<<<< HEAD
     //judge whether the point is out of the window
     public static boolean isOutWindow (int width, int height, @NotNull CartesianCoordinate coordinate) {
         return coordinate.x <= -100 || coordinate.y <= -100 || coordinate.x >= width || coordinate.y >= height;
-=======
-
-    public static boolean isOutFrame (int width, int height, @NotNull CartesianCoordinate coordinate) {
-        return coordinate.x <= 0 || coordinate.y <= 0 || coordinate.x >= width || coordinate.y >= height;
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
     }
 
     public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {

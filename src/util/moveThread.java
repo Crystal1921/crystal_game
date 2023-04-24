@@ -1,90 +1,84 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package util;
 
+import java.util.Random;
 import main.SimpleEasyEastProject;
 
-<<<<<<< HEAD
-import java.util.Random;
-
-public  class moveThread implements Runnable{
+public class moveThread implements Runnable {
     Random random = new Random();
-    @Override
-    public void run() {
-    sleep(1000);
-    movement(750,100+random.nextInt(50),30);
-    sleep(1000);
-    EmitterType1(15);
-    sleep(1000);
-    moveAttack(750,100+random.nextInt(50),-150);
-    EmitterType2(1,0.5,15);
-    sleep(500);
-    EmitterType1(10);
-    sleep(500);
-    EmitterType1(15);
-    movement(750,50+random.nextInt(50),-90);
-    moveAttack(750,50+random.nextInt(50),90);
-    EmitterType2(1,0.5,15);
-    movement(750,100+random.nextInt(100),75);
-    sleep(250);
-    moveAttack(500,200+ random.nextInt(150),-35);
-    moveAttack(250,200+ random.nextInt(150),180);
-=======
-public  class moveThread implements Runnable{
 
-    @Override
-    public void run() {
-    movement(2000,100,30);
-    sleep(2000);
-    EmitterType1(10);
-    sleep(2000);
-    EmitterType2(1,0.5,15);
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
+    public moveThread() {
     }
+
+    public void run() {
+        this.sleep(1000L);
+        this.movement(750, 100 + this.random.nextInt(50), 30.0);
+        this.sleep(1000L);
+        this.EmitterType1(15);
+        this.sleep(1000L);
+        this.moveAttack(750, 100 + this.random.nextInt(50), -150.0);
+        this.EmitterType2(1.0, 0.5, 15);
+        this.sleep(500L);
+        this.EmitterType1(10);
+        this.sleep(500L);
+        this.EmitterType1(15);
+        this.movement(750, 50 + this.random.nextInt(50), -90.0);
+        this.moveAttack(750, 50 + this.random.nextInt(50), 90.0);
+        this.EmitterType2(1.0, 0.5, 15);
+        this.movement(750, 100 + this.random.nextInt(100), 75.0);
+        this.sleep(250L);
+        this.moveAttack(500, 200 + this.random.nextInt(150), -35.0);
+        this.moveAttack(250, 200 + this.random.nextInt(150), 180.0);
+    }
+
     private void sleep(long sleep) {
         try {
-            if ( sleep <= 0 ) sleep = 0;
+            if (sleep <= 0L) {
+                sleep = 0L;
+            }
+
             Thread.sleep(sleep);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (InterruptedException var4) {
+            throw new RuntimeException(var4);
         }
     }
 
-    private void movement (int sleepDuration, int distance, double theta) {
-        sleep(sleepDuration);
+    private void movement(int sleepDuration, int distance, double theta) {
+        this.sleep((long)sleepDuration);
         int emitterNum = SimpleEasyEastProject.RoundEmitterNum;
         SimpleEasyEastProject.RoundEmitterNum = 0;
-        for (double i = 0; i < distance; i++) {
+
+        for(double i = 0.0; i < (double)distance; ++i) {
             SimpleEasyEastProject.cartesian.addX(Math.cos(Math.toRadians(theta)));
             SimpleEasyEastProject.cartesian.addY(Math.sin(Math.toRadians(theta)));
-            sleep(10);
+            this.sleep(10L);
         }
+
         SimpleEasyEastProject.RoundEmitterNum = emitterNum;
     }
-<<<<<<< HEAD
-    private void moveAttack (int sleepDuration, int distance, double theta) {
-        sleep(sleepDuration);
-        for (double i = 0; i < distance; i++) {
+
+    private void moveAttack(int sleepDuration, int distance, double theta) {
+        this.sleep((long)sleepDuration);
+
+        for(double i = 0.0; i < (double)distance; ++i) {
             SimpleEasyEastProject.cartesian.addX(Math.cos(Math.toRadians(theta)));
             SimpleEasyEastProject.cartesian.addY(Math.sin(Math.toRadians(theta)));
-            sleep(10);
+            this.sleep(10L);
         }
+
     }
-    //Direct Emitter
-    private void EmitterType1 (int num) {
-        SimpleEasyEastProject.RoundEmitterRotation = 0;
+
+    private void EmitterType1(int num) {
+        SimpleEasyEastProject.RoundEmitterRotation = 0.0;
         SimpleEasyEastProject.addTheta = 0.5;
         SimpleEasyEastProject.RoundEmitterNum = num;
     }
-    //Round Emitter
-=======
-    //Direct Emitter
-    private void EmitterType1 (int num) {
-        SimpleEasyEastProject.RoundEmitterRotation = 0;
-        SimpleEasyEastProject.addTheta = 0;
-        SimpleEasyEastProject.RoundEmitterNum = num;
-    }
 
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
-    private void EmitterType2 (double rotation, double theta, int num) {
+    private void EmitterType2(double rotation, double theta, int num) {
         SimpleEasyEastProject.RoundEmitterRotation = rotation;
         SimpleEasyEastProject.addTheta = theta;
         SimpleEasyEastProject.RoundEmitterNum = num;

@@ -17,10 +17,7 @@ import java.util.ArrayList;
 
 import static util.gameMath.*;
 import static util.MP3Player.*;
-<<<<<<< HEAD
 import util.MP3Player;
-=======
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
 
 @SuppressWarnings("ALL")
 public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener, ActionListener {
@@ -38,21 +35,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private KeyboardInput keyboard;
     public static CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
     private PolarCoordinate polar = new PolarCoordinate(30,50);
-<<<<<<< HEAD
     final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
     final BufferedImage bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
     final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
     final BufferedImage background = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/background.png"));
     final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
-=======
-    final BufferedImage image = ImageIO.read(new File("src/image/crystal_small.png"));
-    final BufferedImage bullet = ImageIO.read(new File("src/image/bullet.png"));
-    final BufferedImage bullet2 = ImageIO.read(new File("src/image/bullet2.png"));
-    final BufferedImage Hakurei_Reimu = ImageIO.read(new File("src/image/Hakurei_Reimu_big.png"));
-    final BufferedImage background = ImageIO.read(new File("src/image/background.png"));
-    final Image icon = ImageIO.read(new File("src/image/happy.png"));
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<CartesianCoordinate> lines2 = new ArrayList<>();
@@ -67,15 +55,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
-<<<<<<< HEAD
     private int player_hurt = 0;
-=======
-    public static double RoundEmitterRotation = 1;
-    private final double health = 100;
-    public static double addRadius = 4;
-    public static double addTheta = 0.5;
-    private double rotation;
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
     private double hurt = 0;
     private final double health = 100;
     private final double playerHealth = 50;
@@ -153,13 +133,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         gameThread = new Thread(this);
         gameThread.start();
         setFilename("src/sound/Eternal_Night.mp3");
-<<<<<<< HEAD
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
-=======
-        //backgroundmusic = new Thread(musicThread);
-        //backgroundmusic.start();
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
         move = new Thread(moveThread);
         move.start();
     }
@@ -283,15 +258,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     private void render(@NotNull Graphics2D graphics) {
-<<<<<<< HEAD
-=======
-        graphics.drawImage(background,0,0,this);
-        if (doColor) colorIndex += mouse.getNotches();
-        if (doSize) size += mouse.getNotches();
-        RoundEmitter(RoundEmitterNum,RoundEmitterRotation);
-        setOrigin(cartesian);
-        health_proportion = 1 - hurt / health;
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
         Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.drawImage(background,0,0,this);
         graphics.setFont(font1);
@@ -309,19 +275,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if ( !(p == null) ) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY()-4);
-<<<<<<< HEAD
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
                     hurt++;
                     lines.remove(i);
                 }
                 if ( isOutWindow(width,height,new CartesianCoordinate(p.x,p.y)) ) {
-=======
-                if (isOutImage(Hakurei_Reimu, p, cartesian) && !doGameOver) {
-                    hurt++;
-                    lines.remove(i);
-                }
-                if ( isOutFrame(width,height,new CartesianCoordinate(p.x,p.y)) ) {
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
                     lines.remove(i);
                 }
             }
@@ -337,7 +295,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
                 p.setX(cartesian1.getX());
                 p.setY(cartesian1.getY());
-<<<<<<< HEAD
                 if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
                     player_hurt++;
                     lines2.remove(i);
@@ -346,11 +303,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 if ( isOutWindow(width,height,cartesian1) ) {
                     lines2.remove(i);
                     OriginPoint.remove(i);
-=======
-                if ( isOutFrame(width,height,cartesian1) ) {
-                    lines2.remove(i);
-                    OriginPoint.remove(i);
->>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
                 }
             }
         }
