@@ -6,6 +6,7 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class MP3Player {
     public static boolean isPlaying = false;
@@ -39,10 +40,12 @@ public class MP3Player {
         public void run() {
             isPlaying = true;
             try {
-                FileInputStream fis = new FileInputStream("src/sound/Eternal_Night.mp3");
-                player = new AdvancedPlayer(fis, FactoryRegistry.systemRegistry().createAudioDevice());
+                InputStream is = MP3Player.class.getClassLoader().getResourceAsStream("sound/Eternal_Night.mp3");
+                if (is != null) {
+                    player = new AdvancedPlayer(is, FactoryRegistry.systemRegistry().createAudioDevice());
+                }
                 player.play();
-            } catch (FileNotFoundException | JavaLayerException e) {
+            } catch (JavaLayerException e) {
                 e.printStackTrace();
             }
         }

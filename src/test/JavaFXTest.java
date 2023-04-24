@@ -7,9 +7,6 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class JavaFXTest extends Application {
-
-    private static final String MUSIC_FILE = "src/sound/test1.mp3";
-
     public static void main(String[] args) {
         launch(args);
     }
