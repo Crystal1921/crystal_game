@@ -90,12 +90,23 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         editorPane.addHyperlinkListener(this);
         JScrollPane scrollPane = new JScrollPane(editorPane);
 
+        JButton button1 = new JButton("bgm on");
+        button1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!isPlaying) {
+                    backgroundmusic.resume();
+                    isPlaying = true;
+                }
+            }
+        });
         JButton button2 = new JButton("bgm off");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                backgroundmusic.stop();
+                backgroundmusic.suspend();
+                isPlaying = false;
             }
         });
+        editorPane1.add(button1);
         editorPane1.add(button2);
 
         Canvas canvas = new Canvas();
