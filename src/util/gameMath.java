@@ -38,12 +38,15 @@ public class gameMath {
         double y = radius * Math.sin(Math.toRadians(theta)) + polarY;
         return new CartesianCoordinate(x, y);
     }
-
-    public static boolean isOutFrame (int width, int height, @NotNull CartesianCoordinate coordinate) {
-        return coordinate.x <= 0 || coordinate.y <= 0 || coordinate.x >= width || coordinate.y >= height;
+    //judge whether the point is out of the window
+    public static boolean isOutWindow (int width, int height, @NotNull CartesianCoordinate coordinate) {
+        return coordinate.x <= -100 || coordinate.y <= -100 || coordinate.x >= width || coordinate.y >= height;
     }
 
-    public static boolean isOutImage (@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {
+    public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {
         return (p.getX() >= (cartesian.x - image.getWidth() / 2) && p.getX() <= (cartesian.x + image.getWidth() / 2) && p.getY() >= (cartesian.y - image.getHeight() / 2) && p.getY() <= (cartesian.y + image.getHeight() / 2));
+    }
+    public static boolean BoxTest(BufferedImage image, CartesianCoordinate coordinate_bullet, Point player) {
+        return coordinate_bullet.x >= (player.x - image.getWidth() / 2) && coordinate_bullet.x <= (player.x + image.getWidth() / 2) && coordinate_bullet.y >= (player.y - image.getHeight() / 2) && coordinate_bullet.y <= (player.y + image.getHeight() / 2);
     }
 }
