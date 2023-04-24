@@ -2,6 +2,7 @@ package util;
 
 import main.SimpleEasyEastProject;
 
+<<<<<<< HEAD
 import java.util.Random;
 
 public  class moveThread implements Runnable{
@@ -26,6 +27,17 @@ public  class moveThread implements Runnable{
     sleep(250);
     moveAttack(500,200+ random.nextInt(150),-35);
     moveAttack(250,200+ random.nextInt(150),180);
+=======
+public  class moveThread implements Runnable{
+
+    @Override
+    public void run() {
+    movement(2000,100,30);
+    sleep(2000);
+    EmitterType1(10);
+    sleep(2000);
+    EmitterType2(1,0.5,15);
+>>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
     }
     private void sleep(long sleep) {
         try {
@@ -47,6 +59,7 @@ public  class moveThread implements Runnable{
         }
         SimpleEasyEastProject.RoundEmitterNum = emitterNum;
     }
+<<<<<<< HEAD
     private void moveAttack (int sleepDuration, int distance, double theta) {
         sleep(sleepDuration);
         for (double i = 0; i < distance; i++) {
@@ -62,6 +75,15 @@ public  class moveThread implements Runnable{
         SimpleEasyEastProject.RoundEmitterNum = num;
     }
     //Round Emitter
+=======
+    //Direct Emitter
+    private void EmitterType1 (int num) {
+        SimpleEasyEastProject.RoundEmitterRotation = 0;
+        SimpleEasyEastProject.addTheta = 0;
+        SimpleEasyEastProject.RoundEmitterNum = num;
+    }
+
+>>>>>>> b803afd441c29eba8edec9a3bc006c6caf1299bd
     private void EmitterType2 (double rotation, double theta, int num) {
         SimpleEasyEastProject.RoundEmitterRotation = rotation;
         SimpleEasyEastProject.addTheta = theta;
