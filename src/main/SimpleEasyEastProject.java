@@ -20,7 +20,7 @@ import static util.MP3Player.*;
 import util.MP3Player;
 
 @SuppressWarnings("ALL")
-public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener, ActionListener {
+public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener {
 
     private FrameRate frameRate;
     private BufferStrategy bs;
@@ -42,6 +42,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final BufferedImage background = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/background.png"));
     final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
+    final Font font2 = new Font("微软雅黑", Font.BOLD,24);
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<CartesianCoordinate> lines2 = new ArrayList<>();
     private ArrayList<CartesianCoordinate> OriginPoint = new ArrayList<>();
@@ -57,13 +58,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final private int height = 480;
     private int player_hurt = 0;
     private double hurt = 0;
-    private final double health = 100;
+    private final double Hakurei_ReimuHealth = 100;
     private final double playerHealth = 50;
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
     public static double addTheta = 0.5;
     private double rotation;
-    private double health_proportion;
+    private double healthProportion;
     private double playerHealthProportion;
     private final Color[] COLORS = {
             Color.RED,
@@ -171,7 +172,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         renderFrame();
         sleep((long)(40-delta));
         EmitterSpeed();
-        if (health_proportion <= 0 || playerHealthProportion <= 0) doGameOver = true;
+        if (healthProportion <= 0 || playerHealthProportion <= 0) {
+            doGameOver = true;
+            move.stop();
+        }
     }
 
     private void processInput() {
@@ -200,7 +204,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( keyboard.keyDownOnce( KeyEvent.VK_Y ) ) {
             doColor = !doColor;
         }
-        if ( hurt >= health ) {
+        if ( hurt >= Hakurei_ReimuHealth) {
             doGameOver = true;
         }
     }
@@ -265,9 +269,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         frameRate.calculate();
         if (doColor) colorIndex += mouse.getNotches();
         if (doSize) size += mouse.getNotches();
-        RoundEmitter(RoundEmitterNum,RoundEmitterRotation);
+        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation);
         setOrigin(cartesian);
-        health_proportion = 1 - hurt / health;
+        healthProportion = 1 - hurt / Hakurei_ReimuHealth;
         playerHealthProportion = 1 - player_hurt / playerHealth;
         graphics.drawString(frameRate.getFrameRate(),30,30);
         for (int i = 0; i < lines.size() - 1; ++i) {
@@ -306,18 +310,25 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 }
             }
         }
-        //Paint Hakurei_Reimu health
+        //Paint Hakurei_Reimu Hakurei_ReimuHealth
         graphics.setColor(Color.CYAN);
-        if (health_proportion <= 0) graphics.drawString("You Win",400,105);
-        graphics.drawString(String.format("%.1f%%",(health_proportion * 100)),400,85);
+        graphics.drawString(String.format("%.1f%%",(healthProportion * 100)),400,85);
         graphics.drawRoundRect(250,30,200,30,5,5);
-        graphics.fillRoundRect(260,35,(int)Math.floor(180 * health_proportion),20,5,5);
-        //Paint player health
+        graphics.fillRoundRect(260,35,(int)Math.floor(180 * healthProportion),20,5,5);
+        //Paint player Hakurei_ReimuHealth
         graphics.setColor(Color.ORANGE);
-        if (playerHealthProportion <= 0) graphics.drawString("You Lose",400,475);
         graphics.drawString(String.format("%.1f%%",(playerHealthProportion * 100)),400,455);
         graphics.drawRoundRect(250,400,200,30,5,5);
         graphics.fillRoundRect(260,405,(int)Math.floor(180 * playerHealthProportion),20,5,5);
+        graphics.setFont(font2);
+        if (healthProportion <= 0) {
+            graphics.drawString("You Win",400,105);
+            graphics.drawString("欺负灵梦awa",width / 2 - 100, height / 2);
+        }
+        if (playerHealthProportion <= 0) {
+            graphics.drawString("You Lose",400,475);
+            graphics.drawString("作者都打不过，你打不过很正常的",width / 2 - 100, height / 2);
+        }
         graphics.drawImage(player_image,(int)mouse.getPosition().getX() - player_image.getHeight() / 2,(int)mouse.getPosition().getY() - player_image.getWidth() / 2,this);
         graphics.drawImage(Hakurei_Reimu,(int)cartesian.x - Hakurei_Reimu.getHeight() / 2,(int)cartesian.y - Hakurei_Reimu.getHeight() / 2,this);
     }
@@ -342,10 +353,5 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         });
         SwingUtilities.invokeLater(app::createAndShowGUI);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
     }
 }
