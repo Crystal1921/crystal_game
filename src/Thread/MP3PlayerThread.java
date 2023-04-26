@@ -1,4 +1,4 @@
-package util;
+package Thread;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.FactoryRegistry;
@@ -8,12 +8,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class MP3Player {
+public class MP3PlayerThread {
     public static boolean isPlaying = false;
     private static String musicfilename;
     private static AdvancedPlayer player;
 
-    public MP3Player(String filename) throws FileNotFoundException, JavaLayerException {
+    public MP3PlayerThread(String filename) throws FileNotFoundException, JavaLayerException {
         musicfilename = filename;
         FileInputStream fis = new FileInputStream(filename);
         player = new AdvancedPlayer(fis, FactoryRegistry.systemRegistry().createAudioDevice());
@@ -29,7 +29,7 @@ public class MP3Player {
 
     public static void main(String[] args) {
         try {
-            MP3Player player = new MP3Player("src/sound/Eternal_Night.mp3");
+            MP3PlayerThread player = new MP3PlayerThread("src/sound/Eternal_Night.mp3");
             player.play();
         } catch (FileNotFoundException | JavaLayerException e) {
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class MP3Player {
         public void run() {
             isPlaying = true;
             try {
-                InputStream is = MP3Player.class.getClassLoader().getResourceAsStream("sound/Eternal_Night.mp3");
+                InputStream is = MP3PlayerThread.class.getClassLoader().getResourceAsStream("sound/Eternal_Night.mp3");
                 if (is != null) {
                     player = new AdvancedPlayer(is, FactoryRegistry.systemRegistry().createAudioDevice());
                 }
