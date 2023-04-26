@@ -44,9 +44,9 @@ public class gameMath {
     }
 
     public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Point p, @NotNull CartesianCoordinate cartesian) {
-        return (p.getX() >= (cartesian.x - image.getWidth() / 2) && p.getX() <= (cartesian.x + image.getWidth() / 2) && p.getY() >= (cartesian.y - image.getHeight() / 2) && p.getY() <= (cartesian.y + image.getHeight() / 2));
+        return (p.getX() >= (cartesian.x - image.getWidth() / 2.0) && p.getX() <= (cartesian.x + image.getWidth() / 2.0) && p.getY() >= (cartesian.y - image.getHeight() / 2.0) && p.getY() <= (cartesian.y + image.getHeight() / 2.0));
     }
     public static boolean BoxTest(BufferedImage image, CartesianCoordinate coordinate_bullet, Point player) {
-        return coordinate_bullet.x >= (player.x - image.getWidth() / 2) && coordinate_bullet.x <= (player.x + image.getWidth() / 2) && coordinate_bullet.y >= (player.y - image.getHeight() / 2) && coordinate_bullet.y <= (player.y + image.getHeight() / 2);
+        return coordinate_bullet.x >= (player.x - image.getWidth() / 2.0) && coordinate_bullet.x <= (player.x + image.getWidth() / 2.0) && coordinate_bullet.y >= (player.y - image.getHeight() / 2.0) && coordinate_bullet.y <= (player.y + image.getHeight() / 2.0);
     }
 }

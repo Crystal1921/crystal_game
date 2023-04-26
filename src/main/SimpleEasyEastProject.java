@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static util.gameMath.*;
 import static util.MP3Player.*;
@@ -31,13 +32,16 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private Thread backgroundmusic;
     private MP3Player.MusicThread musicThread = new MP3Player.MusicThread();
     private moveThread moveThread = new moveThread();
+    private Random random = new Random();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
     private PolarCoordinate polar = new PolarCoordinate(30,50);
     final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
+    final BufferedImage enemy1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/enemy1.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
     final BufferedImage bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
+    final BufferedImage bullet3 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet3.png"));
     final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
     final BufferedImage background = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/background.png"));
     final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
@@ -46,12 +50,14 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<CartesianCoordinate> lines2 = new ArrayList<>();
     private ArrayList<CartesianCoordinate> OriginPoint = new ArrayList<>();
+    private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
     private boolean drawingLine;
     private boolean doColor = true;
     private boolean doSize = false;
     private boolean doGameOver = false;
     private int colorIndex;
     private int size = 2;
+    private int enemyNum = 0;
     public static int emitter = 1;
     public static int RoundEmitterNum = 15;
     final private int width = 640;
@@ -176,6 +182,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
             move.stop();
         }
+        if (random.nextInt(100) <= 1 && enemyNum <= 2) {
+            CartesianCoordinate cartesian2 = new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(200)+50);
+            enemyNum++;
+        }
     }
 
     private void processInput() {
@@ -196,7 +206,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
             lines2.clear();
+            rotatedImage.clear();
             OriginPoint.clear();
+            rotatedImage.clear();
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_S ) ) {
             doSize = !doSize;
@@ -226,10 +238,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             rotation += theta;
             if (emitter == 0) {
                 for (int i = 0; i < n; i++) {
-                    PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation, 15);
+                    PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
                     CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta, polar1.radius);
                     lines2.add(cartesian1);
                     OriginPoint.add(cartesian);
+                    rotatedImage.add(ImageRotatorExample.rotateImage(bullet3,(int)cartesian1.x,(int)cartesian1.y,angle * i + rotation));
                 }
             }
         }
@@ -291,8 +304,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         for (int i = 0; i < lines2.size() - 1 ; i++) {
             CartesianCoordinate p = lines2.get(i);
             if ( !(p == null) ) {
-                graphics.drawImage(bullet2,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
+                graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 setOrigin(OriginPoint.get(i));
                 polar.addTheta(addTheta);
                 polar.addRadius(addRadius);
@@ -302,10 +315,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
                     player_hurt++;
                     lines2.remove(i);
+                    rotatedImage.remove(i);
                     OriginPoint.remove(i);
                 }
                 if ( isOutWindow(width,height,cartesian1) ) {
                     lines2.remove(i);
+                    rotatedImage.remove(i);
                     OriginPoint.remove(i);
                 }
             }
