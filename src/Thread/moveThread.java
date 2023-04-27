@@ -48,7 +48,7 @@ public class moveThread implements Runnable {
     }
 
     private void movement(int sleepDuration, int distance, double theta) {
-        this.sleep(sleepDuration);
+        this.sleep((long)sleepDuration);
         int emitterNum = SimpleEasyEastProject.RoundEmitterNum;
         SimpleEasyEastProject.RoundEmitterNum = 0;
 
@@ -62,7 +62,7 @@ public class moveThread implements Runnable {
     }
 
     private void moveAttack(int sleepDuration, int distance, double theta) {
-        this.sleep(sleepDuration);
+        this.sleep((long)sleepDuration);
 
         for(double i = 0.0; i < (double)distance; ++i) {
             SimpleEasyEastProject.cartesian.addX(Math.cos(Math.toRadians(theta)));
