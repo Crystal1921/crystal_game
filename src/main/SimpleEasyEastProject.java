@@ -64,16 +64,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
-    private int player_hurt = 0;
-    private double hurt = 0;
-    private final double Hakurei_ReimuHealth = 100;
-    private final double playerHealth = 50;
+    private entity Reimu = new entity(100);
+    private entity player = new entity(50);
+    private boolean doImmutable = false;
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
     public static double addTheta = 0.5;
     private double rotation;
-    private double healthProportion;
-    private double playerHealthProportion;
     private final Color[] COLORS = {
             Color.RED,
             Color.ORANGE,
@@ -183,13 +180,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         sleep((long)(40-delta));
         EmitterSpeed();
         //游戏结束条件--有一方血量为零
-        if (healthProportion <= 0 || playerHealthProportion <= 0) {
+        if (Reimu.proportion() <= 0 || player.proportion() <= 0) {
             doGameOver = true;
             move.stop();
         }
         //每tick有0.1%的概率随机生成一个浮空敌人
         if (random.nextInt(100) <= 1 && enemyNum <= 4) {
-            enemy.add(new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(100)+50) );
+            //enemy.add(new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(100)+50) );
             enemyNum++;
         }
     }
@@ -209,6 +206,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             lines.add( null );
             drawingLine = false;
         }
+        if ( keyboard.keyDownOnce( KeyEvent.VK_F ) ) {
+            doImmutable = true;
+        }
         //作弊码，按下c后全屏清零
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
@@ -220,7 +220,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( keyboard.keyDownOnce( KeyEvent.VK_Y ) ) {
             doColor = !doColor;
         }
-        if ( hurt >= Hakurei_ReimuHealth) {
+        if ( Reimu.hurt >= Reimu.health) {
             doGameOver = true;
         }
     }
@@ -243,7 +243,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             emitter = 0 ;
         }
     }
-    //圆形发射器，以输入的坐标为原点，以360/n为差值，等角度生成n个目标
+    //圆形发射器，以输入的坐标为原点，等角度生成n个目标
     private void RoundEmitter (int n, double theta, CartesianCoordinate cartesian,ArrayList lines) {
         if (n != 0) {
             int angle = 360 / n;
@@ -296,8 +296,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if (doColor) colorIndex += mouse.getNotches();
         if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,cartesian,lines2);
         setOrigin(cartesian);
-        healthProportion = 1 - hurt / Hakurei_ReimuHealth;
-        playerHealthProportion = 1 - player_hurt / playerHealth;
         graphics.drawString(frameRate.getFrameRate(),30,30);
         if (enemy.size() >= 1){
             for (int i = 0; i < enemy.size() - 1; i++) {
@@ -305,13 +303,14 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,enemy.get(i),lines3);
             }
         }
+        //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
             Point p = lines.get(i);
             if ( !(p == null) ) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY()-4);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
-                    hurt++;
+                    Reimu.addHurt(1);
                     lines.remove(i);
                 }
                 if ( isOutWindow(width,height,new CartesianCoordinate(p.x,p.y)) ) {
@@ -319,6 +318,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 }
             }
         }
+        //处理灵梦发射的子弹事件
         for (int i = 0; i < lines2.size() - 1 ; i++) {
             CartesianCoordinate p = lines2.get(i);
             if ( p != null ) {
@@ -327,7 +327,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 p.setX(cartesian1.getX());
                 p.setY(cartesian1.getY());
                 if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
-                    player_hurt++;
+                    if (!doImmutable) player.addHurt(1);
                     lines2.remove(i);
                     rotatedImage.remove(i);
                     OriginPoint.remove(i);
@@ -341,21 +341,21 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         //绘制博丽灵梦的血量条
         graphics.setColor(Color.CYAN);
-        graphics.drawString(String.format("%.1f%%",(healthProportion * 100)),400,85);
+        graphics.drawString(String.format("%.1f%%",(Reimu.proportion() * 100)),400,85);
         graphics.drawRoundRect(250,30,200,30,5,5);
-        graphics.fillRoundRect(260,35,(int)Math.floor(180 * healthProportion),20,5,5);
+        graphics.fillRoundRect(260,35,(int)Math.floor(180 * Reimu.proportion()),20,5,5);
         //绘制玩家的血量条
         graphics.setColor(Color.ORANGE);
-        graphics.drawString(String.format("%.1f%%",(playerHealthProportion * 100)),400,455);
+        graphics.drawString(String.format("%.1f%%",(player.proportion() * 100)),400,455);
         graphics.drawRoundRect(250,400,200,30,5,5);
-        graphics.fillRoundRect(260,405,(int)Math.floor(180 * playerHealthProportion),20,5,5);
+        graphics.fillRoundRect(260,405,(int)Math.floor(180 * player.proportion()),20,5,5);
         graphics.setFont(font2);
         //结束后
-        if (healthProportion <= 0) {
+        if (Reimu.proportion() <= 0) {
             graphics.drawString("You Win",400,105);
             graphics.drawString("欺负灵梦awa",width / 2 - 100, height / 2);
         }
-        if (playerHealthProportion <= 0) {
+        if (player.proportion() <= 0) {
             graphics.drawString("You Lose",400,475);
             graphics.drawString("作者都打不过，你打不过很正常的",width / 2 - 100, height / 2);
         }
