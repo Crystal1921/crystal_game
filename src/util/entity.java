@@ -1,7 +1,7 @@
 package util;
 
 public class entity {
-    public double health;
+    public final double health;
     public double hurt;
     public entity (double health) {
         this.health = health;

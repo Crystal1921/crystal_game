@@ -23,7 +23,7 @@ public class ImageRotatorExample {
             int centerY = image.getHeight() / 2;
 
             // 对图像进行旋转
-            BufferedImage rotatedImage = rotateImage(image, centerX, centerY, angle);
+            BufferedImage rotatedImage = rotateImage(image, angle);
 
             // 保存旋转后的图像
             File outputFile = new File("output.png");
@@ -35,7 +35,7 @@ public class ImageRotatorExample {
         }
     }
 
-    public static BufferedImage rotateImage(BufferedImage image, int centerX, int centerY, double angle) {
+    public static BufferedImage rotateImage(BufferedImage image, double angle) {
         // 计算旋转后的画布大小
         double radians = Math.toRadians(angle);
         double sin = Math.abs(Math.sin(radians));

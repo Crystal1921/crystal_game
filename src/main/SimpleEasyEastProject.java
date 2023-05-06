@@ -49,9 +49,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     final Font font2 = new Font("微软雅黑", Font.BOLD,24);
     private ArrayList<Point> lines = new ArrayList<>();
-    private ArrayList<CartesianCoordinate> lines2 = new ArrayList<>();
-    private ArrayList<CartesianCoordinate> lines3 = new ArrayList<>();
-    private ArrayList<CartesianCoordinate> OriginPoint = new ArrayList<>();
+    private ArrayList<bullet> lines2 = new ArrayList<>();
+    private ArrayList<bullet> lines3 = new ArrayList<>();
     private ArrayList<CartesianCoordinate> enemy = new ArrayList<>();
     private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
     private boolean drawingLine;
@@ -103,15 +102,17 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             public void actionPerformed(ActionEvent e) {
                 if (!isPlaying) {
                     backgroundmusic.resume();
-                    isPlaying = true;
+                    isPlaying = !isPlaying;
                 }
             }
         });
         JButton button2 = new JButton("bgm off");
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                backgroundmusic.suspend();
-                isPlaying = false;
+                if (isPlaying) {
+                    backgroundmusic.suspend();
+                    isPlaying = !isPlaying;
+                }
             }
         });
         editorPane1.add(button1);
@@ -142,7 +143,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         gameThread.start();
         setFilename("src/sound/Eternal_Night.mp3");
         backgroundmusic = new Thread(musicThread);
-        backgroundmusic.start();
+        //backgroundmusic.start();
         move = new Thread(moveThread);
         move.start();
     }
@@ -186,7 +187,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         //每tick有0.1%的概率随机生成一个浮空敌人
         if (random.nextInt(100) <= 1 && enemyNum <= 4) {
-            //enemy.add(new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(100)+50) );
+            enemy.add(new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(100)+50) );
             enemyNum++;
         }
     }
@@ -214,7 +215,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             lines.clear();
             lines2.clear();
             rotatedImage.clear();
-            OriginPoint.clear();
             rotatedImage.clear();
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_Y ) ) {
@@ -224,19 +224,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
         }
     }
-
-    public static void setOriginPoint (CartesianCoordinate coordinate) {
-        cartesian = coordinate;
-    }
-
-    private CartesianCoordinate PositionTransform (CartesianCoordinate p, CartesianCoordinate origin) {
-        PolarCoordinate polar = gameMath.Cartesian2Polar(p.getX(),p.getY());
-        setOrigin(origin);
-        polar.addTheta(addTheta);
-        polar.addRadius(addRadius);
-        CartesianCoordinate cartesian1 = gameMath.Polar2Cartesian(polar.getTheta(),polar.getRadius());
-        return cartesian1;
-    }
     private void EmitterSpeed () {
         emitter++;
         if ( emitter == 5 ) {
@@ -244,17 +231,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
     }
     //圆形发射器，以输入的坐标为原点，等角度生成n个目标
-    private void RoundEmitter (int n, double theta, CartesianCoordinate cartesian,ArrayList lines) {
+    private void RoundEmitter (int n, double theta, ArrayList lines) {
         if (n != 0) {
             int angle = 360 / n;
             rotation += theta;
             if (emitter == 0) {
                 for (int i = 0; i < n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
-                    CartesianCoordinate cartesian1 = Polar2Cartesian(polar1.theta, polar1.radius);
-                    lines.add(cartesian1);
-                    OriginPoint.add(this.cartesian);
-                    rotatedImage.add(ImageRotatorExample.rotateImage(bullet3,(int)cartesian1.x,(int)cartesian1.y,angle * i + rotation));
+                    lines.add(new bullet(polar1,cartesian.x,cartesian.y));
+                    rotatedImage.add(ImageRotatorExample.rotateImage(bullet3,angle * i + rotation));
                 }
             }
         }
@@ -294,21 +279,14 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         //计算帧数
         frameRate.calculate();
         if (doColor) colorIndex += mouse.getNotches();
-        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,cartesian,lines2);
-        setOrigin(cartesian);
+        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,lines2);
         graphics.drawString(frameRate.getFrameRate(),30,30);
-        if (enemy.size() >= 1){
-            for (int i = 0; i < enemy.size() - 1; i++) {
-                graphics.drawImage(enemy1, (int) enemy.get(i).x, (int) enemy.get(i).y,this);
-                if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,enemy.get(i),lines3);
-            }
-        }
         //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
             Point p = lines.get(i);
-            if ( !(p == null) ) {
+            if ( p != null) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
-                p.setLocation(p.getX(),p.getY()-4);
+                p.setLocation(p.getX(),p.getY() - 6);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
                     Reimu.addHurt(1);
                     lines.remove(i);
@@ -320,23 +298,26 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         //处理灵梦发射的子弹事件
         for (int i = 0; i < lines2.size() - 1 ; i++) {
-            CartesianCoordinate p = lines2.get(i);
+            bullet p = lines2.get(i);
             if ( p != null ) {
                 graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
-                CartesianCoordinate cartesian1 = PositionTransform(p,OriginPoint.get(i));
-                p.setX(cartesian1.getX());
-                p.setY(cartesian1.getY());
+                p.addRadius(addRadius);
+                p.addTheta(addTheta);
+                p.PolarPosition();
                 if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
                     if (!doImmutable) player.addHurt(1);
                     lines2.remove(i);
                     rotatedImage.remove(i);
-                    OriginPoint.remove(i);
                 }
-                if ( isOutWindow(width,height,cartesian1) ) {
+                if ( isOutWindow(width,height,p) ) {
                     lines2.remove(i);
                     rotatedImage.remove(i);
-                    OriginPoint.remove(i);
                 }
+            }
+        }
+        //处理小实体的子弹事件
+        if (enemy.size() >= 1){
+            for (int i = 0; i < enemy.size() - 1; i++) {
             }
         }
         //绘制博丽灵梦的血量条
