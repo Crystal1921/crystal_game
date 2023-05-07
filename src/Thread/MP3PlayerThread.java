@@ -10,11 +10,9 @@ import java.io.InputStream;
 
 public class MP3PlayerThread {
     public static boolean isPlaying = false;
-    private static String musicfilename;
     private static AdvancedPlayer player;
 
     public MP3PlayerThread(String filename) throws FileNotFoundException, JavaLayerException {
-        musicfilename = filename;
         FileInputStream fis = new FileInputStream(filename);
         player = new AdvancedPlayer(fis, FactoryRegistry.systemRegistry().createAudioDevice());
     }
@@ -23,8 +21,7 @@ public class MP3PlayerThread {
         player.play();
     }
 
-    public static void setFilename (String file) {
-        musicfilename = file;
+    public static void setFilename () {
     }
 
     public static void main(String[] args) {

@@ -37,7 +37,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
-    private PolarCoordinate polar = new PolarCoordinate(30,50);
     final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
     final BufferedImage enemy1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/enemy1.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
@@ -57,14 +56,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private boolean doColor = true;
     private boolean doGameOver = false;
     private int colorIndex;
-    private int size = 2;
     private int enemyNum = 0;
-    public static int emitter = 1;
+    private int emitter = 1;
     public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
-    private entity Reimu = new entity(100);
-    private entity player = new entity(50);
+    private entity Reimu = new entity(100,5);
+    private entity player = new entity(50,2);
     private boolean doImmutable = false;
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
@@ -141,9 +139,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         //新建线程，开始游戏
         gameThread = new Thread(this);
         gameThread.start();
-        setFilename("src/sound/Eternal_Night.mp3");
+        setFilename();
         backgroundmusic = new Thread(musicThread);
-        //backgroundmusic.start();
+        backgroundmusic.start();
+        backgroundmusic.suspend();
         move = new Thread(moveThread);
         move.start();
     }
@@ -178,8 +177,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private void gameLoop(double delta) {
         processInput();
         renderFrame();
+        emitter++;
         sleep((long)(40-delta));
-        EmitterSpeed();
         //游戏结束条件--有一方血量为零
         if (Reimu.proportion() <= 0 || player.proportion() <= 0) {
             doGameOver = true;
@@ -201,7 +200,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( mouse.buttonDownOnce(MouseEvent.BUTTON1) ) {
             drawingLine = true;
         }
-        if ( mouse.buttonDown(MouseEvent.BUTTON1) && (emitter == 0) ) {
+        if ( mouse.buttonDown(MouseEvent.BUTTON1) && (emitter % player.emitterSpeed == 0) ) {
             lines.add( mouse.getPosition() );
         } else if ( drawingLine ) {
             lines.add( null );
@@ -224,18 +223,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
         }
     }
-    private void EmitterSpeed () {
-        emitter++;
-        if ( emitter == 5 ) {
-            emitter = 0 ;
-        }
-    }
+
     //圆形发射器，以输入的坐标为原点，等角度生成n个目标
     private void RoundEmitter (int n, double theta, ArrayList lines) {
         if (n != 0) {
             int angle = 360 / n;
             rotation += theta;
-            if (emitter == 0) {
+            if (emitter % Reimu.emitterSpeed == 0) {
                 for (int i = 0; i < n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
                     lines.add(new bullet(polar1,cartesian.x,cartesian.y));
@@ -288,7 +282,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
                 p.setLocation(p.getX(),p.getY() - 6);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
-                    Reimu.addHurt(1);
+                    Reimu.addHurt();
                     lines.remove(i);
                 }
                 if ( isOutWindow(width,height,new CartesianCoordinate(p.x,p.y)) ) {
@@ -305,7 +299,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 p.addTheta(addTheta);
                 p.PolarPosition();
                 if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
-                    if (!doImmutable) player.addHurt(1);
+                    if (!doImmutable) player.addHurt();
                     lines2.remove(i);
                     rotatedImage.remove(i);
                 }
