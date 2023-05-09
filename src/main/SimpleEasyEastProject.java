@@ -318,7 +318,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 p.addRadius(addRadius);
                 p.addTheta(addTheta);
                 p.PolarPosition();
-                if (BoxTest(player_image, p, mouse.getPosition()) && !doGameOver) {
+                if (BoxTest(player_image, p, position.Point()) && !doGameOver) {
                     if (!doImmutable) player.addHurt();
                     lines2.remove(i);
                     rotatedImage.remove(i);
