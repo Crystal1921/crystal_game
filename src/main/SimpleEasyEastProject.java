@@ -26,7 +26,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     private FrameRate frameRate;
     private BufferStrategy bs;
-    private JButton button;
     private volatile boolean running;
     private Thread gameThread;
     private Thread move;
@@ -36,7 +35,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private Random random = new Random();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
-    public static CartesianCoordinate cartesian = new CartesianCoordinate(300,100);
+    public static Cartesian cartesian = new Cartesian(300,100);
     final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
     final BufferedImage enemy1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/enemy1.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
@@ -50,19 +49,21 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<bullet> lines2 = new ArrayList<>();
     private ArrayList<bullet> lines3 = new ArrayList<>();
-    private ArrayList<CartesianCoordinate> enemy = new ArrayList<>();
+    private ArrayList<Cartesian> enemy = new ArrayList<>();
     private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
-    private boolean drawingLine;
     private boolean doColor = true;
     private boolean doGameOver = false;
+    private boolean MotionControl = false;
     private int colorIndex;
     private int enemyNum = 0;
     private int emitter = 1;
+    private int MoveSpeed = 3;
     public static int RoundEmitterNum = 15;
     final private int width = 640;
     final private int height = 480;
-    private entity Reimu = new entity(100,5);
-    private entity player = new entity(50,2);
+    private entity Reimu = new entity(100,7);
+    private entity player = new entity(50,4,new Cartesian(320,300));
+    private Cartesian position = player.getPosition();
     private boolean doImmutable = false;
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
@@ -149,7 +150,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     @Override
     public void run() {
-        setOrigin(cartesian);
         running = true;
         long curTime = System.nanoTime();
         long lastTime = curTime;
@@ -175,6 +175,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
     //游戏循环，每tick执行一次
     private void gameLoop(double delta) {
+        if ( Reimu.hurt >= Reimu.health) {
+            doGameOver = true;
+        }
         processInput();
         renderFrame();
         emitter++;
@@ -186,7 +189,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         //每tick有0.1%的概率随机生成一个浮空敌人
         if (random.nextInt(100) <= 1 && enemyNum <= 4) {
-            enemy.add(new CartesianCoordinate(random.nextInt(250)+70, random.nextInt(100)+50) );
+            enemy.add(new Cartesian(random.nextInt(250)+70, random.nextInt(100)+50) );
             enemyNum++;
         }
     }
@@ -194,17 +197,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private void processInput() {
         keyboard.poll();
         mouse.poll();
-        if ( keyboard.keyDownOnce(KeyEvent.VK_SPACE) ) {
-            System.out.println("VK_SPACE");
+        MoveSpeed += mouse.getNotches();
+        if (MoveSpeed <= 0) {
+            MoveSpeed = 1;
         }
-        if ( mouse.buttonDownOnce(MouseEvent.BUTTON1) ) {
-            drawingLine = true;
+        if ( MotionControl ) {
+            MouseControl();
         }
-        if ( mouse.buttonDown(MouseEvent.BUTTON1) && (emitter % player.emitterSpeed == 0) ) {
-            lines.add( mouse.getPosition() );
-        } else if ( drawingLine ) {
-            lines.add( null );
-            drawingLine = false;
+        else {
+            KeyboardControl();
         }
         if ( keyboard.keyDownOnce( KeyEvent.VK_F ) ) {
             doImmutable = true;
@@ -216,11 +217,30 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             rotatedImage.clear();
             rotatedImage.clear();
         }
-        if ( keyboard.keyDownOnce( KeyEvent.VK_Y ) ) {
-            doColor = !doColor;
+    }
+
+    private void MouseControl () {
+        position.setLocation(mouse.getPosition().x,mouse.getPosition().y);
+        if ( mouse.buttonDown(MouseEvent.BUTTON1) && (emitter % player.emitterSpeed == 0) ) {
+            lines.add( position.Point() );
         }
-        if ( Reimu.hurt >= Reimu.health) {
-            doGameOver = true;
+    }
+
+    private void KeyboardControl () {
+        if ( emitter % player.emitterSpeed == 0 ) {
+            lines.add( position.Point() );
+        }
+        if ( keyboard.keyDown( KeyEvent.VK_DOWN ) || keyboard.keyDown( KeyEvent.VK_S )) {
+            position.addY(MoveSpeed);
+        }
+        if ( keyboard.keyDown( KeyEvent.VK_UP ) || keyboard.keyDown( KeyEvent.VK_W )) {
+            position.addY(-MoveSpeed);
+        }
+        if ( keyboard.keyDown( KeyEvent.VK_RIGHT ) || keyboard.keyDown( KeyEvent.VK_D )) {
+            position.addX(MoveSpeed);
+        }
+        if ( keyboard.keyDown( KeyEvent.VK_LEFT ) || keyboard.keyDown( KeyEvent.VK_A )) {
+            position.addX(-MoveSpeed);
         }
     }
 
@@ -280,12 +300,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             Point p = lines.get(i);
             if ( p != null) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
-                p.setLocation(p.getX(),p.getY() - 6);
+                p.setLocation(p.getX(),p.getY() - 4);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
                     Reimu.addHurt();
                     lines.remove(i);
                 }
-                if ( isOutWindow(width,height,new CartesianCoordinate(p.x,p.y)) ) {
+                if ( isOutWindow(width,height,new Cartesian(p.x,p.y)) ) {
                     lines.remove(i);
                 }
             }
@@ -334,7 +354,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             graphics.drawString("You Lose",400,475);
             graphics.drawString("作者都打不过，你打不过很正常的",width / 2 - 100, height / 2);
         }
-        graphics.drawImage(player_image,(int)mouse.getPosition().getX() - player_image.getHeight() / 2,(int)mouse.getPosition().getY() - player_image.getWidth() / 2,this);
+        graphics.drawImage(player_image,(int)position.x - player_image.getHeight() / 2,(int)position.y - player_image.getWidth() / 2,this);
         graphics.drawImage(Hakurei_Reimu,(int)cartesian.x - Hakurei_Reimu.getHeight() / 2,(int)cartesian.y - Hakurei_Reimu.getHeight() / 2,this);
     }
 
@@ -349,6 +369,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("user.language", "en");
+        System.setProperty("user.region", "US");
         final SimpleEasyEastProject app = new SimpleEasyEastProject();
         app.setIconImage(app.icon);
         app.addWindowListener(new WindowAdapter() {

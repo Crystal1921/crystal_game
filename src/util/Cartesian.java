@@ -1,9 +1,11 @@
 package util;
 
-public class CartesianCoordinate {
+import java.awt.*;
+
+public class Cartesian {
     public double x;
     public double y;
-    public CartesianCoordinate(double x, double y){
+    public Cartesian(double x, double y){
         this.x = x;
         this.y = y;
     }
@@ -12,6 +14,13 @@ public class CartesianCoordinate {
     }
     public void addY(double y) {
         this.y += y;
+    }
+    public void setLocation (double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
+    public Point Point () {
+        return new Point((int)x,(int)y);
     }
     @Override
     public String toString() {
