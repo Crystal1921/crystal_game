@@ -11,6 +11,7 @@ public class Bullet {
     private double y;
     private double theta;
     private double radius;
+    private int lifetime;
 
     public Bullet(double x, double y, double OriginX, double OriginY) {
         this.OriginX = OriginX;
@@ -57,6 +58,12 @@ public class Bullet {
 
     public double getY() {
         return this.y;
+    }
+    public void addLife() {
+        this.lifetime++;
+    }
+    public int getLifeTime () {
+        return lifetime;
     }
     public String toPosition () {
         return "x:" + this.x + ",y:" + this.y;

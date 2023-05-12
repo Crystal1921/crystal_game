@@ -348,12 +348,19 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
         //阴阳玉子弹
-        if (level ==2) {
+        if (level == 2) {
             if (bulletLists.get(2).size() != 0) {
                 for (int i = 0; i < bulletLists.get(2).size() - 1; i++) {
                     Bullet bullet1 = bulletLists.get(2).get(i);
-                    bullet1.setLocation(bullet1.getX(),bullet1.getY()+8);
-                    graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                    if (bullet1 != null) {
+                        double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
+                        bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(deltaTheta)) * 6,bullet1.getY() - Math.sin(Math.toRadians(deltaTheta)) * 6);
+                        graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                        bullet1.addLife();
+                        if ( isOutWindow(width,height,bullet1) || bullet1.getLifeTime() >= 50) {
+                            bulletLists.get(2).remove(i);
+                        }
+                    }
                 }
             }
         }
@@ -363,7 +370,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 OnmyouDama yinyangyu = YinYangYu.get(i);
                 yinyangyu.setOrigin(cartesian);
                 yinyangyu.RoundPosition(i * 60 + emitter * 4);
-                if (emitter % Reimu.emitterSpeed == 0 || !doGameOver) {
+                if (emitter % Reimu.emitterSpeed == 0 && !doGameOver) {
                     PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
                     bulletLists.get(2).add(new Bullet(polar1,cartesian.x,cartesian.y));
                 }

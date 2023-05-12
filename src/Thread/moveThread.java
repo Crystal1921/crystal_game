@@ -21,14 +21,14 @@ public class moveThread implements Runnable {
         this.EmitterType1(15);
         this.sleep(1000L);
         this.moveAttack(750, 100 + this.random.nextInt(50), -150.0);
-        this.EmitterType2(1.0, 0.5, 15);
+        this.EmitterType2(1.0, 0.5, 18);
         this.sleep(500L);
         this.EmitterType1(10);
         this.sleep(500L);
         this.EmitterType1(15);
         this.movement(750, 50 + this.random.nextInt(50), -90.0);
         this.moveAttack(750, 50 + this.random.nextInt(50), 90.0);
-        this.EmitterType2(1.0, 0.5, 15);
+        this.EmitterType2(1.0, 0.5, 14);
         this.movement(750, 100 + this.random.nextInt(100), 75.0);
         this.sleep(250L);
         this.moveAttack(500, 200 + this.random.nextInt(150), -35.0);
