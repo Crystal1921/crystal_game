@@ -49,7 +49,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<Cartesian> enemy = new ArrayList<>();
-    private ArrayList<ArrayList<bullet>> bulletLists = new ArrayList<>();
+    private ArrayList<ArrayList<Bullet>> bulletLists = new ArrayList<>();
     private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
     private boolean doColor = true;
     private boolean doGameOver = false;
@@ -86,8 +86,9 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     gameMath math = new gameMath();
     protected void createAndShowGUI() {
-        bulletLists.add(new ArrayList<bullet>());
-        bulletLists.add(new ArrayList<bullet>());
+        bulletLists.add(new ArrayList<Bullet>());
+        bulletLists.add(new ArrayList<Bullet>());
+        bulletLists.add(new ArrayList<Bullet>());
         for (int i = 0; i < 6; i++) {
             YinYangYu.add(new OnmyouDama());
         }
@@ -264,7 +265,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if (emitter % Reimu.emitterSpeed == 0) {
                 for (int i = 0; i < n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
-                    lines.add(new bullet(polar1,cartesian.x,cartesian.y));
+                    lines.add(new Bullet(polar1,cartesian.x,cartesian.y));
                     rotatedImage.add(ImageRotatorExample.rotateImage(bullet3,angle * i + rotation));
                 }
             }
@@ -324,7 +325,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         }
         //处理灵梦发射的子弹事件
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
-            bullet p = bulletLists.get(1).get(i);
+            Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
                 graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 p.addRadius(addRadius);
@@ -346,12 +347,26 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             for (int i = 0; i < enemy.size() - 1; i++) {
             }
         }
+        //阴阳玉子弹
+        if (level ==2) {
+            if (bulletLists.get(2).size() != 0) {
+                for (int i = 0; i < bulletLists.get(2).size() - 1; i++) {
+                    Bullet bullet1 = bulletLists.get(2).get(i);
+                    bullet1.setLocation(bullet1.getX(),bullet1.getY()+8);
+                    graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                }
+            }
+        }
         //绘制阴阳玉
         if (level == 2) {
             for (int i = 0; i < 6; i++) {
                 OnmyouDama yinyangyu = YinYangYu.get(i);
                 yinyangyu.setOrigin(cartesian);
                 yinyangyu.RoundPosition(i * 60 + emitter * 4);
+                if (emitter % Reimu.emitterSpeed == 0 || !doGameOver) {
+                    PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
+                    bulletLists.get(2).add(new Bullet(polar1,cartesian.x,cartesian.y));
+                }
                 graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2,this);
             }
         }

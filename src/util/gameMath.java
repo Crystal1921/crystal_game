@@ -12,7 +12,7 @@ public class gameMath {
     }
 
     //judge whether the point is out of the window
-    public static boolean isOutWindow (int width, int height, @NotNull bullet bullet) {
+    public static boolean isOutWindow (int width, int height, @NotNull Bullet bullet) {
         return bullet.getX() <= -100 || bullet.getY() <= -100 || bullet.getX() >= width || bullet.getY() >= height;
     }
 
@@ -23,7 +23,7 @@ public class gameMath {
     public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Point p, @NotNull Cartesian cartesian) {
         return (p.getX() >= (cartesian.x - image.getWidth() / 2.0) && p.getX() <= (cartesian.x + image.getWidth() / 2.0) && p.getY() >= (cartesian.y - image.getHeight() / 2.0) && p.getY() <= (cartesian.y + image.getHeight() / 2.0));
     }
-    public static boolean BoxTest(@NotNull BufferedImage image, @NotNull bullet bullet, @NotNull Point player) {
+    public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Bullet bullet, @NotNull Point player) {
         return bullet.getX() >= (player.x - image.getWidth() / 2.0) && bullet.getX() <= (player.x + image.getWidth() / 2.0) && bullet.getY() >= (player.y - image.getHeight() / 2.0) && bullet.getY() <= (player.y + image.getHeight() / 2.0);
     }
 }

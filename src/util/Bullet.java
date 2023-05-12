@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static util.gameMath.distance;
 
-public class bullet{
+public class Bullet {
     private final double OriginX;
     private final double OriginY;
     private double x;
@@ -12,7 +12,7 @@ public class bullet{
     private double theta;
     private double radius;
 
-    public bullet(double x, double y, double OriginX, double OriginY) {
+    public Bullet(double x, double y, double OriginX, double OriginY) {
         this.OriginX = OriginX;
         this.OriginY = OriginY;
         double deltaX = x - OriginX;
@@ -20,7 +20,7 @@ public class bullet{
         this.radius = distance(x, y, OriginX, OriginY);
         this.theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
     }
-    public bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY) {
+    public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY) {
         this.theta = polar.theta;
         this.radius = polar.radius;
         this.OriginX = OriginX;
@@ -47,12 +47,18 @@ public class bullet{
         this.radius = distance(x, y, OriginX, OriginY);
         this.theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
     }
-
+    public void setLocation(double x,double y) {
+        this.x = x;
+        this.y = y;
+    }
     public double getX() {
         return this.x;
     }
 
     public double getY() {
         return this.y;
+    }
+    public String toPosition () {
+        return "x:" + this.x + ",y:" + this.y;
     }
 }
