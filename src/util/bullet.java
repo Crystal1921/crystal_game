@@ -28,7 +28,6 @@ public class bullet{
         this.x = polar.radius * Math.cos(Math.toRadians(polar.theta)) + OriginX;
         this.y = polar.radius * Math.sin(Math.toRadians(polar.theta)) + OriginY;
     }
-
     public void addTheta(double delta) {
         this.theta = this.theta + delta;
     }

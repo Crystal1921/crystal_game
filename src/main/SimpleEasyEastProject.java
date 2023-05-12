@@ -37,7 +37,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private KeyboardInput keyboard;
     public static Cartesian cartesian = new Cartesian(300,100);
     final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
-    final BufferedImage enemy1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/enemy1.png"));
+    final BufferedImage yin_yang_yu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/yin_yang_yu.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
     final BufferedImage bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
     final BufferedImage bullet3 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet3.png"));
@@ -46,25 +46,26 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     final Font font2 = new Font("微软雅黑", Font.BOLD,24);
+    private ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
     private ArrayList<Point> lines = new ArrayList<>();
-    private ArrayList<bullet> lines2 = new ArrayList<>();
-    private ArrayList<bullet> lines3 = new ArrayList<>();
     private ArrayList<Cartesian> enemy = new ArrayList<>();
+    private ArrayList<ArrayList<bullet>> bulletLists = new ArrayList<>();
     private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
     private boolean doColor = true;
     private boolean doGameOver = false;
-    private boolean MotionControl = false;
+    private boolean MotionControl = true;
+    private boolean doImmutable = false;
     private int colorIndex;
     private int enemyNum = 0;
     private int emitter = 1;
     private int MoveSpeed = 3;
     public static int RoundEmitterNum = 15;
+    public static int level = 2;
     final private int width = 640;
     final private int height = 480;
-    private entity Reimu = new entity(100,7);
-    private entity player = new entity(50,4,new Cartesian(320,300));
+    private entity Reimu = new entity(100,6);
+    private entity player = new entity(50,6,new Cartesian(320,300));
     private Cartesian position = player.getPosition();
-    private boolean doImmutable = false;
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
     public static double addTheta = 0.5;
@@ -85,6 +86,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     gameMath math = new gameMath();
     protected void createAndShowGUI() {
+        bulletLists.add(new ArrayList<bullet>());
+        bulletLists.add(new ArrayList<bullet>());
+        for (int i = 0; i < 6; i++) {
+            YinYangYu.add(new OnmyouDama());
+        }
         JEditorPane editorPane1 = new JEditorPane();
         editorPane1.setLayout(new FlowLayout());
         editorPane1.setPreferredSize(new Dimension(width,40));
@@ -187,11 +193,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
             move.stop();
         }
-        //每tick有0.1%的概率随机生成一个浮空敌人
+        /*
+        //每tick有0.1%的概率随机生成一个浮空敌人（待开发）
         if (random.nextInt(100) <= 1 && enemyNum <= 4) {
             enemy.add(new Cartesian(random.nextInt(250)+70, random.nextInt(100)+50) );
             enemyNum++;
         }
+         */
     }
     //处理键盘输入和鼠标输入
     private void processInput() {
@@ -207,14 +215,18 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         else {
             KeyboardControl();
         }
+        //切换键盘控制和鼠标控制
+        if ( keyboard.keyDownOnce( KeyEvent.VK_Q ) ) {
+            MotionControl = !MotionControl;
+        }
+        //真-作弊码 无敌
         if ( keyboard.keyDownOnce( KeyEvent.VK_F ) ) {
             doImmutable = true;
         }
-        //作弊码，按下c后全屏清零
+        //虚假的作弊码，按下c后全屏清零
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
-            lines2.clear();
-            rotatedImage.clear();
+            bulletLists.get(1).clear();
             rotatedImage.clear();
         }
     }
@@ -293,7 +305,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         //计算帧数
         frameRate.calculate();
         if (doColor) colorIndex += mouse.getNotches();
-        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,lines2);
+        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
         graphics.drawString(frameRate.getFrameRate(),30,30);
         //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
@@ -311,8 +323,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
         //处理灵梦发射的子弹事件
-        for (int i = 0; i < lines2.size() - 1 ; i++) {
-            bullet p = lines2.get(i);
+        for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
+            bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
                 graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 p.addRadius(addRadius);
@@ -320,11 +332,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 p.PolarPosition();
                 if (BoxTest(player_image, p, position.Point()) && !doGameOver) {
                     if (!doImmutable) player.addHurt();
-                    lines2.remove(i);
+                    bulletLists.get(1).remove(i);
                     rotatedImage.remove(i);
                 }
                 if ( isOutWindow(width,height,p) ) {
-                    lines2.remove(i);
+                    bulletLists.get(1).remove(i);
                     rotatedImage.remove(i);
                 }
             }
@@ -332,6 +344,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         //处理小实体的子弹事件
         if (enemy.size() >= 1){
             for (int i = 0; i < enemy.size() - 1; i++) {
+            }
+        }
+        //绘制阴阳玉
+        if (level == 2) {
+            for (int i = 0; i < 6; i++) {
+                OnmyouDama yinyangyu = YinYangYu.get(i);
+                yinyangyu.setOrigin(cartesian);
+                yinyangyu.RoundPosition(i * 60 + emitter * 4);
+                graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2,this);
             }
         }
         //绘制博丽灵梦的血量条
