@@ -90,7 +90,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         bulletLists.add(new ArrayList<Bullet>());
         bulletLists.add(new ArrayList<Bullet>());
         for (int i = 0; i < 6; i++) {
-            YinYangYu.add(new OnmyouDama());
+            YinYangYu.add(new OnmyouDama(5,36));
         }
         JEditorPane editorPane1 = new JEditorPane();
         editorPane1.setLayout(new FlowLayout());
@@ -193,6 +193,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if (Reimu.proportion() <= 0 || player.proportion() <= 0) {
             doGameOver = true;
             move.stop();
+        }
+        //阴阳玉
+        for (int i = 0; i < YinYangYu.size() - 1; i++) {
+            if (YinYangYu.get(i).proportion() <= 0) {
+                YinYangYu.remove(i);
+            }
         }
         /*
         //每tick有0.1%的概率随机生成一个浮空敌人（待开发）
@@ -318,6 +324,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                     Reimu.addHurt();
                     lines.remove(i);
                 }
+                for (int j = 0; j < YinYangYu.size() - 1; j++) {
+                    if (BoxTest(yin_yang_yu, p, YinYangYu.get(j).getPosition()) && !doGameOver) {
+                        YinYangYu.get(j).addHurt();
+                        lines.remove(i);
+                    }
+                }
                 if ( isOutWindow(width,height,new Cartesian(p.x,p.y)) ) {
                     lines.remove(i);
                 }
@@ -353,28 +365,37 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 for (int i = 0; i < bulletLists.get(2).size() - 1; i++) {
                     Bullet bullet1 = bulletLists.get(2).get(i);
                     if (bullet1 != null) {
-                        double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
-                        bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(deltaTheta)) * 6,bullet1.getY() - Math.sin(Math.toRadians(deltaTheta)) * 6);
+                        if (bullet1.getLifeTime() <= 10) {
+                            double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
+                            bullet1.setTheta(deltaTheta);
+                        }
+                        bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * 6,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * 6);
                         graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
                         bullet1.addLife();
-                        if ( isOutWindow(width,height,bullet1) || bullet1.getLifeTime() >= 50) {
+                        if (BoxTest(player_image, bullet1, position.Point()) && !doGameOver) {
+                            if (!doImmutable) player.addHurt();
+                            bulletLists.get(2).remove(i);
+                        }
+                        if ( isOutWindow(width,height,bullet1)) {
                             bulletLists.get(2).remove(i);
                         }
                     }
                 }
             }
         }
-        //绘制阴阳玉
+        //绘制阴阳玉并生成子弹
         if (level == 2) {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < YinYangYu.size(); i++) {
                 OnmyouDama yinyangyu = YinYangYu.get(i);
-                yinyangyu.setOrigin(cartesian);
-                yinyangyu.RoundPosition(i * 60 + emitter * 4);
-                if (emitter % Reimu.emitterSpeed == 0 && !doGameOver) {
-                    PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
-                    bulletLists.get(2).add(new Bullet(polar1,cartesian.x,cartesian.y));
+                if (yinyangyu != null) {
+                    yinyangyu.setOrigin(cartesian);
+                    yinyangyu.RoundPosition(i * 60 + emitter * 4);
+                    if (emitter % yinyangyu.emitterSpeed == 0 && !doGameOver) {
+                        PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
+                        bulletLists.get(2).add(new Bullet(polar1, cartesian.x, cartesian.y));
+                    }
+                    graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2, this);
                 }
-                graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2,this);
             }
         }
         //绘制博丽灵梦的血量条

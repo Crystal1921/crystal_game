@@ -52,6 +52,12 @@ public class Bullet {
         this.x = x;
         this.y = y;
     }
+    public void setTheta (double theta) {
+        this.theta = theta;
+    }
+    public double getTheta () {
+        return theta;
+    }
     public double getX() {
         return this.x;
     }
