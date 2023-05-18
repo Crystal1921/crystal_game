@@ -60,7 +60,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private int emitter = 1;
     private int MoveSpeed = 3;
     public static int RoundEmitterNum = 15;
-    public static int level = 2;
+    public static int level = 1;
     final private int width = 640;
     final private int height = 480;
     private entity Reimu = new entity(100,6);
@@ -150,7 +150,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         setFilename();
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
-        backgroundmusic.suspend();
         move = new Thread(moveThread);
         move.start();
     }
@@ -182,15 +181,17 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
     //游戏循环，每tick执行一次
     private void gameLoop(double delta) {
-        if ( Reimu.hurt >= Reimu.health) {
-            doGameOver = true;
+        if ( Reimu.hurt >= Reimu.health && level == 1) {
+            level = 2;
+            Reimu.hurt = 0;
+            player.hurt = 0;
         }
         processInput();
         renderFrame();
         emitter++;
         sleep((long)(40-delta));
         //游戏结束条件--有一方血量为零
-        if (Reimu.proportion() <= 0 || player.proportion() <= 0) {
+        if (player.proportion() <= 0) {
             doGameOver = true;
             move.stop();
         }
@@ -249,16 +250,16 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if ( emitter % player.emitterSpeed == 0 ) {
             lines.add( position.Point() );
         }
-        if ( keyboard.keyDown( KeyEvent.VK_DOWN ) || keyboard.keyDown( KeyEvent.VK_S )) {
+        if ( (keyboard.keyDown( KeyEvent.VK_DOWN ) || keyboard.keyDown( KeyEvent.VK_S )) && position.y <= height) {
             position.addY(MoveSpeed);
         }
-        if ( keyboard.keyDown( KeyEvent.VK_UP ) || keyboard.keyDown( KeyEvent.VK_W )) {
+        if (( keyboard.keyDown( KeyEvent.VK_UP ) || keyboard.keyDown( KeyEvent.VK_W )) && position.y >= 0) {
             position.addY(-MoveSpeed);
         }
-        if ( keyboard.keyDown( KeyEvent.VK_RIGHT ) || keyboard.keyDown( KeyEvent.VK_D )) {
+        if (( keyboard.keyDown( KeyEvent.VK_RIGHT ) || keyboard.keyDown( KeyEvent.VK_D )) && position.x >= 0) {
             position.addX(MoveSpeed);
         }
-        if ( keyboard.keyDown( KeyEvent.VK_LEFT ) || keyboard.keyDown( KeyEvent.VK_A )) {
+        if (( keyboard.keyDown( KeyEvent.VK_LEFT ) || keyboard.keyDown( KeyEvent.VK_A ))  && position.x <= width) {
             position.addX(-MoveSpeed);
         }
     }
@@ -312,7 +313,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         //计算帧数
         frameRate.calculate();
         if (doColor) colorIndex += mouse.getNotches();
-        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
         graphics.drawString(frameRate.getFrameRate(),30,30);
         //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
@@ -336,6 +336,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
         //处理灵梦发射的子弹事件
+        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
             Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
@@ -410,7 +411,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         graphics.fillRoundRect(260,405,(int)Math.floor(180 * player.proportion()),20,5,5);
         graphics.setFont(font2);
         //结束后
-        if (Reimu.proportion() <= 0) {
+        if (Reimu.proportion() <= 0 && level == 2) {
             graphics.drawString("You Win",400,105);
             graphics.drawString("欺负灵梦awa",width / 2 - 100, height / 2);
         }
