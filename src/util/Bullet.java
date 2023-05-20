@@ -14,6 +14,8 @@ public class Bullet {
     private int lifetime;
 
     public Bullet(double x, double y, double OriginX, double OriginY) {
+        this.x = x;
+        this.y = y;
         this.OriginX = OriginX;
         this.OriginY = OriginY;
         double deltaX = x - OriginX;

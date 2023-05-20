@@ -1,5 +1,9 @@
 package util;
 
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +35,6 @@ public class StarDrawing extends JPanel {
     private BufferedImage createImage() {
         int width = getWidth();
         int height = getHeight();
-        System.out.println(width + "+" + height);
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
@@ -71,7 +74,50 @@ public class StarDrawing extends JPanel {
         return red == 0 && green == 0 && blue == 0;
     }
 
+    public static @NotNull BufferedImage dotImageGenerate(int a, int b, int num, int numRows) {
+        JFrame frame = new JFrame("Drawing Example");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        StarDrawing drawing1 = new StarDrawing(46, 150, 5); // 创建一个Drawing对象
+        frame.add(drawing1); // 将Drawing对象添加到容器中
+        frame.setSize(400, 400); // 设置窗口大小
+        frame.setVisible(true); // 显示窗口
+
+        BufferedImage image1 = drawing1.createImage(); // 将Drawing对象转换为BufferedImage对象
+
+        StarDrawing drawing2 = new StarDrawing(10,10);
+        frame.add(drawing2);
+        frame.setSize(400,400);
+        frame.setVisible(true);
+
+        BufferedImage image2 = drawing2.createImage();
+
+        return drawBlackIntersection(image1,image2);
+    }
+
+    @Contract("_ -> param1")
+    public static @NotNull BufferedImage dotImage (@NotNull BufferedImage image) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+
+        for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int rgb = image.getRGB(x, y);
+                    Color color = new Color(rgb);
+                    if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
+                        for (int ny = Math.max(0, y - 5); ny <= Math.min(height - 1, y + 5); ny++) {
+                            for (int nx = Math.max(0, x - 5); nx <= Math.min(width - 1, x + 5); nx++) {
+                                if (nx == x && ny == y) {
+                                    continue;  // Skip the current pixel
+                                }
+                                image.setRGB(nx,ny,Color.BLACK.getRGB());
+                            }
+                        }
+                    }
+                }
+            }
+            return image;
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -116,25 +162,11 @@ public class StarDrawing extends JPanel {
     }
 
     public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame("Drawing Example");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        StarDrawing drawing1 = new StarDrawing(46, 150, 5); // 创建一个Drawing对象
-        frame.add(drawing1); // 将Drawing对象添加到容器中
-        frame.setSize(400, 400); // 设置窗口大小
-        frame.setVisible(true); // 显示窗口
-
-        BufferedImage image1 = drawing1.createImage(); // 将Drawing对象转换为BufferedImage对象
-
-        StarDrawing drawing2 = new StarDrawing(10,10);
-        frame.add(drawing2);
-        frame.setSize(400,400);
-        frame.setVisible(true);
-
-        BufferedImage image2 = drawing2.createImage();
-
-        File outputFile = new File("output.png");
-        ImageIO.write(drawBlackIntersection(image1,image2), "png", outputFile);
-
+        File outputFile1 = new File("out/image/output.png");
+        File outputFile2 = new File("out/image/output4.png");
+        BufferedImage image1 = dotImageGenerate(46,150,5,10);
+        ImageIO.write(image1, "png", outputFile1);
+        BufferedImage image2 = dotImage(image1);
+        ImageIO.write(image2,"png",outputFile2);
     }
 }

@@ -18,6 +18,7 @@ import java.util.Random;
 
 import static util.gameMath.*;
 import static Thread.MP3PlayerThread.*;
+import static util.StarDrawing.*;
 import Thread.MP3PlayerThread;
 import Thread.moveThread;
 
@@ -86,9 +87,14 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
 
     gameMath math = new gameMath();
     protected void createAndShowGUI() {
-        bulletLists.add(new ArrayList<Bullet>());
-        bulletLists.add(new ArrayList<Bullet>());
-        bulletLists.add(new ArrayList<Bullet>());
+        for (int i = 0; i < 10; i++) {
+            bulletLists.add(new ArrayList<Bullet>());
+        }
+        BufferedImage Starimage = dotImage(dotImageGenerate(46,150,5,10));
+        ImageEmitter(Starimage,bulletLists.get(3));
+        for (int i = 0; i < bulletLists.get(3).size() - 1; i++) {
+            System.out.println(bulletLists.get(3).get(i).getX());
+        }
         for (int i = 0; i < 6; i++) {
             YinYangYu.add(new OnmyouDama(5,36));
         }
@@ -150,6 +156,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         setFilename();
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
+        backgroundmusic.suspend();
         move = new Thread(moveThread);
         move.start();
     }
@@ -278,6 +285,22 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
     }
+    private void ImageEmitter (BufferedImage image, ArrayList lines) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb = image.getRGB(x, y);
+                Color color = new Color(rgb);
+                if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
+                    System.out.println(x + "+" + y);
+                    lines.add(new Bullet(x,y,cartesian.x,cartesian.y));
+                }
+            }
+        }
+        System.out.println(bulletLists.get(3).size());
+    }
+
     private void sleep(long sleep) {
         try {
             if ( sleep <= 0 ) sleep = 0;
@@ -398,6 +421,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                     graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2, this);
                 }
             }
+        }
+        //绘制新弹幕
+        for (int i = 0; i < bulletLists.get(3).size() - 1; i++) {
+            Bullet bullet1 = bulletLists.get(3).get(i);
+            graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+            bullet1.toPosition();
         }
         //绘制博丽灵梦的血量条
         graphics.setColor(Color.CYAN);
