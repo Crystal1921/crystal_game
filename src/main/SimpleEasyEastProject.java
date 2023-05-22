@@ -41,7 +41,11 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     final BufferedImage yin_yang_yu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/yin_yang_yu.png"));
     final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
     final BufferedImage bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
-    final BufferedImage bullet3 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet3.png"));
+    final BufferedImage Hakurei_bullet1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet1.png"));
+    final BufferedImage Hakurei_bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet2.png"));
+    final BufferedImage Hakurei_bullet3 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet3.png"));
+    final BufferedImage Hakurei_bullet_1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_1.png"));
+    final BufferedImage Hakurei_bullet_2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_2.png"));
     final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
     final BufferedImage background = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/background.png"));
     final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
@@ -71,30 +75,16 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     public static double addRadius = 4;
     public static double addTheta = 0.5;
     private double rotation;
-    private final Color[] COLORS = {
-            Color.RED,
-            Color.ORANGE,
-            Color.YELLOW,
-            Color.GREEN,
-            Color.CYAN,
-            Color.BLUE,
-            Color.MAGENTA
-    };
 
     public SimpleEasyEastProject() throws IOException {
         frameRate = new FrameRate();
     }
-
-    gameMath math = new gameMath();
     protected void createAndShowGUI() {
         for (int i = 0; i < 10; i++) {
             bulletLists.add(new ArrayList<Bullet>());
         }
-        BufferedImage Starimage = dotImage(dotImageGenerate(46,150,5,10));
+        BufferedImage Starimage = dotImage(dotImageGenerate(23,75,5,20));
         ImageEmitter(Starimage,bulletLists.get(3));
-        for (int i = 0; i < bulletLists.get(3).size() - 1; i++) {
-            System.out.println(bulletLists.get(3).get(i).getX());
-        }
         for (int i = 0; i < 6; i++) {
             YinYangYu.add(new OnmyouDama(5,36));
         }
@@ -279,8 +269,15 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             if (emitter % Reimu.emitterSpeed == 0) {
                 for (int i = 0; i < n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
-                    lines.add(new Bullet(polar1,cartesian.x,cartesian.y));
-                    rotatedImage.add(ImageRotatorExample.rotateImage(bullet3,angle * i + rotation));
+                    lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90));
+                    switch (level){
+                        case 1 :
+                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet_1,angle * i + rotation));
+                            break;
+                        case 2 :
+                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet1,angle * i + rotation));
+                            break;
+                    }
                 }
             }
         }
@@ -293,12 +290,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 int rgb = image.getRGB(x, y);
                 Color color = new Color(rgb);
                 if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
-                    System.out.println(x + "+" + y);
-                    lines.add(new Bullet(x,y,cartesian.x,cartesian.y));
+                    lines.add(new Bullet(x - width / 2 + cartesian.x,y - height / 2 + cartesian.y,cartesian.x,cartesian.y));
                 }
             }
         }
-        System.out.println(bulletLists.get(3).size());
     }
 
     private void sleep(long sleep) {
@@ -329,10 +324,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     private void render(@NotNull Graphics2D graphics) {
-        Color color = COLORS[ Math.abs( colorIndex % COLORS.length ) ];
         graphics.drawImage(background,0,0,this);
         graphics.setFont(font1);
-        graphics.setColor(color);
         //计算帧数
         frameRate.calculate();
         if (doColor) colorIndex += mouse.getNotches();
@@ -342,7 +335,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             Point p = lines.get(i);
             if ( p != null) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
-                p.setLocation(p.getX(),p.getY() - 4);
+                p.setLocation(p.getX(),p.getY() - 6);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
                     Reimu.addHurt();
                     lines.remove(i);
@@ -359,7 +352,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
         //处理灵梦发射的子弹事件
-        if (!doGameOver) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
+        if (!doGameOver && level == 1) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
             Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
@@ -389,13 +382,13 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 for (int i = 0; i < bulletLists.get(2).size() - 1; i++) {
                     Bullet bullet1 = bulletLists.get(2).get(i);
                     if (bullet1 != null) {
+                        bullet1.addLife();
                         if (bullet1.getLifeTime() <= 10) {
                             double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
                             bullet1.setTheta(deltaTheta);
                         }
                         bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * 6,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * 6);
                         graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                        bullet1.addLife();
                         if (BoxTest(player_image, bullet1, position.Point()) && !doGameOver) {
                             if (!doImmutable) player.addHurt();
                             bulletLists.get(2).remove(i);
@@ -423,10 +416,12 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             }
         }
         //绘制新弹幕
-        for (int i = 0; i < bulletLists.get(3).size() - 1; i++) {
-            Bullet bullet1 = bulletLists.get(3).get(i);
-            graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
-            bullet1.toPosition();
+        if (level == 3) {
+            for (int i = 0; i < bulletLists.get(3).size() - 1; i++) {
+                Bullet bullet1 = bulletLists.get(3).get(i);
+                graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                bullet1.toPosition();
+            }
         }
         //绘制博丽灵梦的血量条
         graphics.setColor(Color.CYAN);
@@ -463,8 +458,6 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     public static void main(String[] args) throws IOException {
-        System.setProperty("user.language", "en");
-        System.setProperty("user.region", "US");
         final SimpleEasyEastProject app = new SimpleEasyEastProject();
         app.setIconImage(app.icon);
         app.addWindowListener(new WindowAdapter() {

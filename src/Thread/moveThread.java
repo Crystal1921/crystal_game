@@ -31,8 +31,8 @@ public class moveThread implements Runnable {
         this.EmitterType2(1.0, 0.5, 14);
         this.movement(750, 100 + this.random.nextInt(100), 75.0);
         this.sleep(250L);
-        this.moveAttack(500, 200 + this.random.nextInt(150), -35.0);
-        this.moveAttack(250, 200 + this.random.nextInt(150), 180.0);
+        this.moveAttack(500, 100 + this.random.nextInt(150), -35.0);
+        this.moveAttack(250, 100 + this.random.nextInt(150), 180.0);
     }
 
     private void sleep(long sleep) {

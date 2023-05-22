@@ -12,10 +12,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class StarDrawing extends JPanel {
-    private int method;
+    private int method;//控制生成模式
     private int a; // 内接圆半径
     private int b; // 外接圆半径
-    private int num;
+    private int num; //多角星星数
     private int numRows; // 网格行数
     private int numCols; // 网格列数
 
@@ -78,20 +78,20 @@ public class StarDrawing extends JPanel {
         JFrame frame = new JFrame("Drawing Example");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        StarDrawing drawing1 = new StarDrawing(46, 150, 5); // 创建一个Drawing对象
-        frame.add(drawing1); // 将Drawing对象添加到容器中
-        frame.setSize(400, 400); // 设置窗口大小
+        StarDrawing drawing1 = new StarDrawing(a, b, num);
+        frame.add(drawing1);
+        frame.setSize(400, 400);
         frame.setVisible(true); // 显示窗口
 
-        BufferedImage image1 = drawing1.createImage(); // 将Drawing对象转换为BufferedImage对象
+        BufferedImage image1 = drawing1.createImage(); // 将StarDrawing对象转换为BufferedImage对象
 
-        StarDrawing drawing2 = new StarDrawing(10,10);
+        StarDrawing drawing2 = new StarDrawing(numRows,numRows);
         frame.add(drawing2);
         frame.setSize(400,400);
         frame.setVisible(true);
 
         BufferedImage image2 = drawing2.createImage();
-
+        frame.dispose();
         return drawBlackIntersection(image1,image2);
     }
 
@@ -108,7 +108,7 @@ public class StarDrawing extends JPanel {
                         for (int ny = Math.max(0, y - 5); ny <= Math.min(height - 1, y + 5); ny++) {
                             for (int nx = Math.max(0, x - 5); nx <= Math.min(width - 1, x + 5); nx++) {
                                 if (nx == x && ny == y) {
-                                    continue;  // Skip the current pixel
+                                    continue;
                                 }
                                 image.setRGB(nx,ny,Color.BLACK.getRGB());
                             }

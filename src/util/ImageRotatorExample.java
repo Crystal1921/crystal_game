@@ -44,7 +44,7 @@ public class ImageRotatorExample {
         int height = (int) Math.round(image.getHeight() * cos + image.getWidth() * sin);
 
         // 创建旋转后的画布
-        BufferedImage rotatedImage = new BufferedImage(width, height, image.getType());
+        BufferedImage rotatedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = rotatedImage.createGraphics();
 
         // 对画布进行旋转和平移操作

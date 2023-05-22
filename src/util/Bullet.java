@@ -12,6 +12,8 @@ public class Bullet {
     private double theta;
     private double radius;
     private int lifetime;
+    public int stage;
+    private double BoxRotation;
 
     public Bullet(double x, double y, double OriginX, double OriginY) {
         this.x = x;
@@ -22,6 +24,15 @@ public class Bullet {
         double deltaY = y - OriginY;
         this.radius = distance(x, y, OriginX, OriginY);
         this.theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
+    }
+    public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY, double BoxRotation) {
+        this.theta = polar.theta;
+        this.radius = polar.radius;
+        this.OriginX = OriginX;
+        this.OriginY = OriginY;
+        this.BoxRotation = BoxRotation;
+        this.x = polar.radius * Math.cos(Math.toRadians(polar.theta)) + OriginX;
+        this.y = polar.radius * Math.sin(Math.toRadians(polar.theta)) + OriginY;
     }
     public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY) {
         this.theta = polar.theta;
