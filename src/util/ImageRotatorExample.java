@@ -1,6 +1,6 @@
 package util;
 
-import main.SimpleEasyEastProject;
+import main.SimpleEasyTouhouFangame;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -15,7 +15,7 @@ public class ImageRotatorExample {
     public static void main(String[] args) {
         try {
             // 加载图像
-            BufferedImage image = ImageIO.read(Objects.requireNonNull(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet3.png")));
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/bullet3.png")));
 
             // 定义旋转角度和旋转中心坐标
             double angle = 45;

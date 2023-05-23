@@ -2,6 +2,8 @@ package util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+
 import static util.gameMath.distance;
 
 public class Bullet {
@@ -11,9 +13,12 @@ public class Bullet {
     private double y;
     private double theta;
     private double radius;
-    private int lifetime;
-    public int stage;
+    public int lifetime = 0;
+    private int pauseTime = 0;
+    public int stage = 1;
+    public double speed = 4;
     private double BoxRotation;
+    private boolean isPause = false;
 
     public Bullet(double x, double y, double OriginX, double OriginY) {
         this.x = x;
@@ -61,6 +66,9 @@ public class Bullet {
         this.radius = distance(x, y, OriginX, OriginY);
         this.theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
     }
+    public Point Point () {
+        return new Point((int)x,(int)y);
+    }
     public void setLocation(double x,double y) {
         this.x = x;
         this.y = y;
@@ -74,17 +82,30 @@ public class Bullet {
     public double getX() {
         return this.x;
     }
-
     public double getY() {
         return this.y;
     }
     public void addLife() {
         this.lifetime++;
     }
-    public int getLifeTime () {
+    public void addStage() {
+        this.stage++;
+    }
+    public void addPauseTime() {pauseTime++;}
+    public void resetLife() {
+        this.lifetime = 0;
+    }
+    public void resetPauseTime() {this.pauseTime = 0;}
+    public int getLifeTime() {
         return lifetime;
     }
+    public int getPauseTime() {return pauseTime;}
     public String toPosition () {
         return "x:" + this.x + ",y:" + this.y;
+    }
+    public boolean isContinue() {return isPause;}
+    public void pause () {isPause = !isPause;}
+    public void setSpeed (double speed) {
+        this.speed = speed;
     }
 }

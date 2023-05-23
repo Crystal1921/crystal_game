@@ -6,7 +6,7 @@
 package Thread;
 
 import java.util.Random;
-import main.SimpleEasyEastProject;
+import main.SimpleEasyTouhouFangame;
 
 public class moveThread implements Runnable {
     Random random = new Random();
@@ -49,38 +49,38 @@ public class moveThread implements Runnable {
 
     private void movement(int sleepDuration, int distance, double theta) {
         this.sleep(sleepDuration);
-        int emitterNum = SimpleEasyEastProject.RoundEmitterNum;
-        SimpleEasyEastProject.RoundEmitterNum = 0;
+        int emitterNum = SimpleEasyTouhouFangame.RoundEmitterNum;
+        SimpleEasyTouhouFangame.RoundEmitterNum = 0;
 
         for(double i = 0.0; i < (double)distance; ++i) {
-            SimpleEasyEastProject.cartesian.addX(Math.cos(Math.toRadians(theta)));
-            SimpleEasyEastProject.cartesian.addY(Math.sin(Math.toRadians(theta)));
+            SimpleEasyTouhouFangame.cartesian.addX(Math.cos(Math.toRadians(theta)));
+            SimpleEasyTouhouFangame.cartesian.addY(Math.sin(Math.toRadians(theta)));
             this.sleep(10L);
         }
 
-        SimpleEasyEastProject.RoundEmitterNum = emitterNum;
+        SimpleEasyTouhouFangame.RoundEmitterNum = emitterNum;
     }
 
     private void moveAttack(int sleepDuration, int distance, double theta) {
         this.sleep(sleepDuration);
 
         for(double i = 0.0; i < (double)distance; ++i) {
-            SimpleEasyEastProject.cartesian.addX(Math.cos(Math.toRadians(theta)));
-            SimpleEasyEastProject.cartesian.addY(Math.sin(Math.toRadians(theta)));
+            SimpleEasyTouhouFangame.cartesian.addX(Math.cos(Math.toRadians(theta)));
+            SimpleEasyTouhouFangame.cartesian.addY(Math.sin(Math.toRadians(theta)));
             this.sleep(10L);
         }
 
     }
 
     private void EmitterType1(int num) {
-        SimpleEasyEastProject.RoundEmitterRotation = 0.0;
-        SimpleEasyEastProject.addTheta = 0.5;
-        SimpleEasyEastProject.RoundEmitterNum = num;
+        SimpleEasyTouhouFangame.RoundEmitterRotation = 0.0;
+        SimpleEasyTouhouFangame.addTheta = 0.5;
+        SimpleEasyTouhouFangame.RoundEmitterNum = num;
     }
 
     private void EmitterType2(double rotation, double theta, int num) {
-        SimpleEasyEastProject.RoundEmitterRotation = rotation;
-        SimpleEasyEastProject.addTheta = theta;
-        SimpleEasyEastProject.RoundEmitterNum = num;
+        SimpleEasyTouhouFangame.RoundEmitterRotation = rotation;
+        SimpleEasyTouhouFangame.addTheta = theta;
+        SimpleEasyTouhouFangame.RoundEmitterNum = num;
     }
 }

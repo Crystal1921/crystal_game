@@ -23,7 +23,7 @@ import Thread.MP3PlayerThread;
 import Thread.moveThread;
 
 @SuppressWarnings("ALL")
-public class SimpleEasyEastProject extends JFrame implements Runnable, HyperlinkListener {
+public class SimpleEasyTouhouFangame extends JFrame implements Runnable, HyperlinkListener {
 
     private FrameRate frameRate;
     private BufferStrategy bs;
@@ -37,18 +37,20 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static Cartesian cartesian = new Cartesian(300,100);
-    final BufferedImage player_image = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
-    final BufferedImage yin_yang_yu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/yin_yang_yu.png"));
-    final BufferedImage bullet = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet.png"));
-    final BufferedImage bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
-    final BufferedImage Hakurei_bullet1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet1.png"));
-    final BufferedImage Hakurei_bullet2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet2.png"));
-    final BufferedImage Hakurei_bullet3 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet3.png"));
-    final BufferedImage Hakurei_bullet_1 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_1.png"));
-    final BufferedImage Hakurei_bullet_2 = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_2.png"));
-    final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
-    final BufferedImage background = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/background.png"));
-    final Image icon = ImageIO.read(SimpleEasyEastProject.class.getClassLoader().getResourceAsStream("image/happy.png"));
+    final BufferedImage player_image = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
+    final BufferedImage yin_yang_yu = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/yin_yang_yu.png"));
+    final BufferedImage bullet = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/bullet.png"));
+    final BufferedImage bullet2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
+    final BufferedImage Hakurei_bullet1 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet1.png"));
+    final BufferedImage Hakurei_bullet2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet2.png"));
+    final BufferedImage Hakurei_bullet3 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet3.png"));
+    final BufferedImage Hakurei_bullet_1 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_1.png"));
+    final BufferedImage Hakurei_bullet_2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_2.png"));
+    final BufferedImage Hakurei_bullet_3 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_3.png"));
+    final BufferedImage Hakurei_bullet_4 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_4.png"));
+    final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
+    final BufferedImage background = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/background.png"));
+    final Image icon = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/happy.png"));
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     final Font font2 = new Font("微软雅黑", Font.BOLD,24);
     private ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
@@ -65,7 +67,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     private int emitter = 1;
     private int MoveSpeed = 3;
     public static int RoundEmitterNum = 15;
-    public static int level = 1;
+    public static int level = 2;
     final private int width = 640;
     final private int height = 480;
     private entity Reimu = new entity(100,6);
@@ -76,7 +78,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     public static double addTheta = 0.5;
     private double rotation;
 
-    public SimpleEasyEastProject() throws IOException {
+    public SimpleEasyTouhouFangame() throws IOException {
         frameRate = new FrameRate();
     }
     protected void createAndShowGUI() {
@@ -86,7 +88,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         BufferedImage Starimage = dotImage(dotImageGenerate(23,75,5,20));
         ImageEmitter(Starimage,bulletLists.get(3));
         for (int i = 0; i < 6; i++) {
-            YinYangYu.add(new OnmyouDama(5,36));
+            YinYangYu.add(new OnmyouDama(5,70));
         }
         JEditorPane editorPane1 = new JEditorPane();
         editorPane1.setLayout(new FlowLayout());
@@ -192,6 +194,10 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             doGameOver = true;
             move.stop();
         }
+        if (Reimu.proportion() <= 0 && level == 2) {
+            doGameOver = true;
+            move.stop();
+        }
         //阴阳玉
         for (int i = 0; i < YinYangYu.size() - 1; i++) {
             if (YinYangYu.get(i).proportion() <= 0) {
@@ -266,8 +272,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
         if (n != 0) {
             int angle = 360 / n;
             rotation += theta;
-            if (emitter % Reimu.emitterSpeed == 0) {
-                for (int i = 0; i < n; i++) {
+            if (emitter % (Reimu.emitterSpeed + (level - 1) * 45 ) == 0) {
+                for (int i = 0; i <= n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
                     lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90));
                     switch (level){
@@ -275,7 +281,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                             rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet_1,angle * i + rotation));
                             break;
                         case 2 :
-                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet1,angle * i + rotation));
+                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet_4,angle * i + rotation));
                             break;
                     }
                 }
@@ -342,8 +348,8 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
                 }
                 for (int j = 0; j < YinYangYu.size() - 1; j++) {
                     if (BoxTest(yin_yang_yu, p, YinYangYu.get(j).getPosition()) && !doGameOver) {
-                        YinYangYu.get(j).addHurt();
-                        lines.remove(i);
+                        //YinYangYu.get(j).addHurt();
+                        //lines.remove(i);
                     }
                 }
                 if ( isOutWindow(width,height,new Cartesian(p.x,p.y)) ) {
@@ -357,14 +363,19 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
                 graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
-                p.addRadius(addRadius);
-                p.addTheta(addTheta);
-                p.PolarPosition();
-                if (BoxTest(player_image, p, position.Point()) && !doGameOver) {
+                if (BoxTest(player_image, p, position.Point()) && !doGameOver && level == 1) {
                     if (!doImmutable) player.addHurt();
                     bulletLists.get(1).remove(i);
                     rotatedImage.remove(i);
                 }
+                if(distance(p.Point(),position.Point()) <= Hakurei_bullet_4.getWidth() / 2 && level == 2) {
+                    if (!doImmutable) player.addHurt();
+                    bulletLists.get(1).remove(i);
+                    rotatedImage.remove(i);
+                }
+                p.addRadius(addRadius);
+                p.addTheta(addTheta);
+                p.PolarPosition();
                 if ( isOutWindow(width,height,p) ) {
                     bulletLists.get(1).remove(i);
                     rotatedImage.remove(i);
@@ -376,19 +387,51 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
             for (int i = 0; i < enemy.size() - 1; i++) {
             }
         }
-        //阴阳玉子弹
+        //阴阳玉子弹-梦想封印
         if (level == 2) {
             if (bulletLists.get(2).size() != 0) {
                 for (int i = 0; i < bulletLists.get(2).size() - 1; i++) {
                     Bullet bullet1 = bulletLists.get(2).get(i);
                     if (bullet1 != null) {
-                        bullet1.addLife();
-                        if (bullet1.getLifeTime() <= 10) {
+                        if (bullet1.isContinue())
+                        {
+                            bullet1.addLife();
+                        }   else {
+                            bullet1.addPauseTime();
+                        }
+                        if (bullet1.getLifeTime() <= 5) {
                             double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
                             bullet1.setTheta(deltaTheta);
                         }
-                        bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * 6,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * 6);
-                        graphics.drawImage(bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                        if (bullet1.getPauseTime() >= 50) {
+                            bullet1.pause();
+                            bullet1.resetPauseTime();
+                        }
+                        if (bullet1.getLifeTime() >= 50 && bullet1.stage <= 2) {
+                            bullet1.resetLife();
+                            bullet1.addStage();
+                            bullet1.pause();
+                        }
+                        if (bullet1.isContinue()) bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * bullet1.speed,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * bullet1.speed);
+                        switch (bullet1.stage) {
+                            case 1 :
+                                if (bullet1.isContinue()) {
+                                    graphics.drawImage(Hakurei_bullet1,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                                }   else {
+                                    graphics.drawImage(Hakurei_bullet_2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                                }
+                                break;
+                            case 2 :
+                                if (bullet1.isContinue()) {
+                                    graphics.drawImage(Hakurei_bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                                }   else {
+                                    graphics.drawImage(Hakurei_bullet_3,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                                }
+                                break;
+                            case 3 :
+                                graphics.drawImage(Hakurei_bullet3,(int)bullet1.getX(),(int)bullet1.getY(),this);
+                                break;
+                        }
                         if (BoxTest(player_image, bullet1, position.Point()) && !doGameOver) {
                             if (!doImmutable) player.addHurt();
                             bulletLists.get(2).remove(i);
@@ -458,7 +501,7 @@ public class SimpleEasyEastProject extends JFrame implements Runnable, Hyperlink
     }
 
     public static void main(String[] args) throws IOException {
-        final SimpleEasyEastProject app = new SimpleEasyEastProject();
+        final SimpleEasyTouhouFangame app = new SimpleEasyTouhouFangame();
         app.setIconImage(app.icon);
         app.addWindowListener(new WindowAdapter() {
             @Override

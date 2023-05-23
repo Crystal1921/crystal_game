@@ -8,7 +8,10 @@ import java.awt.image.BufferedImage;
 public class gameMath {
 
     public static double distance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+    public static double distance(Point p1, Point p2) {
+        return Math.sqrt(Math.pow(p1.x - p2.x, 2)+Math.pow(p1.y - p2.y, 2));
     }
 
     //judge whether the point is out of the window
