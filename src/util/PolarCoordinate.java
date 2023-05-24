@@ -7,6 +7,10 @@ public class PolarCoordinate {
         this.theta = theta;
         this.radius = radius;
     }
+    public PolarCoordinate addRadius(double radius) {
+        this.radius += radius;
+        return this;
+    }
     @Override
     public String toString () {
         return "[theta=" + theta + ",radius=" + radius + "]";

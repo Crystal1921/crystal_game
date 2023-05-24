@@ -8,6 +8,8 @@ package Thread;
 import java.util.Random;
 import main.SimpleEasyTouhouFangame;
 
+import static util.gameMath.distance;
+
 public class moveThread implements Runnable {
     Random random = new Random();
 
@@ -33,6 +35,12 @@ public class moveThread implements Runnable {
         this.sleep(250L);
         this.moveAttack(500, 100 + this.random.nextInt(150), -35.0);
         this.moveAttack(250, 100 + this.random.nextInt(150), 180.0);
+        moveTo(320,100);
+        while (true) {
+            this.moveAttack(0,150,0);
+            this.moveAttack(0,300,180);
+            this.moveAttack(0,150,0);
+        }
     }
 
     private void sleep(long sleep) {
@@ -72,6 +80,11 @@ public class moveThread implements Runnable {
 
     }
 
+    private void moveTo(double x, double y) {
+        double deltaX = SimpleEasyTouhouFangame.cartesian.x - x;
+        double deltaY = SimpleEasyTouhouFangame.cartesian.y - y;
+        movement(0,(int)distance(SimpleEasyTouhouFangame.cartesian.x,SimpleEasyTouhouFangame.cartesian.y,320,100),-Math.toDegrees(Math.atan2(deltaY, deltaX)));
+    }
     private void EmitterType1(int num) {
         SimpleEasyTouhouFangame.RoundEmitterRotation = 0.0;
         SimpleEasyTouhouFangame.addTheta = 0.5;

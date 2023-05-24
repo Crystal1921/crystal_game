@@ -148,7 +148,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         setFilename();
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
-        backgroundmusic.suspend();
         move = new Thread(moveThread);
         move.start();
     }
@@ -272,7 +271,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         if (n != 0) {
             int angle = 360 / n;
             rotation += theta;
-            if (emitter % (Reimu.emitterSpeed + (level - 1) * 45 ) == 0) {
+            if (emitter % (Reimu.emitterSpeed + (level - 1) * 60 ) == 0) {
                 for (int i = 0; i <= n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
                     lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90));
@@ -359,6 +358,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         }
         //处理灵梦发射的子弹事件
         if (!doGameOver && level == 1) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
+        if (!doGameOver && level == 2) RoundEmitter(30,0,bulletLists.get(1));
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
             Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
@@ -399,7 +399,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                         }   else {
                             bullet1.addPauseTime();
                         }
-                        if (bullet1.getLifeTime() <= 5) {
+                        if (bullet1.getLifeTime() <= 10) {
                             double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
                             bullet1.setTheta(deltaTheta);
                         }
@@ -411,6 +411,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                             bullet1.resetLife();
                             bullet1.addStage();
                             bullet1.pause();
+                            bullet1.addSpeed();
                         }
                         if (bullet1.isContinue()) bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * bullet1.speed,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * bullet1.speed);
                         switch (bullet1.stage) {
@@ -452,7 +453,8 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                     yinyangyu.RoundPosition(i * 60 + emitter * 4);
                     if (emitter % yinyangyu.emitterSpeed == 0 && !doGameOver) {
                         PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
-                        bulletLists.get(2).add(new Bullet(polar1, cartesian.x, cartesian.y));
+                        bulletLists.get(2).add(new Bullet(polar1, cartesian.x, cartesian.y,i));
+                        bulletLists.get(2).add(new Bullet(polar1.addRadius(20), cartesian.x , cartesian.y));
                     }
                     graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2, this);
                 }

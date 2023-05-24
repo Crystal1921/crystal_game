@@ -47,6 +47,7 @@ public class Bullet {
         this.x = polar.radius * Math.cos(Math.toRadians(polar.theta)) + OriginX;
         this.y = polar.radius * Math.sin(Math.toRadians(polar.theta)) + OriginY;
     }
+
     public void addTheta(double delta) {
         this.theta = this.theta + delta;
     }
@@ -88,6 +89,7 @@ public class Bullet {
     public void addLife() {
         this.lifetime++;
     }
+    public void addSpeed() {this.speed++;}
     public void addStage() {
         this.stage++;
     }
