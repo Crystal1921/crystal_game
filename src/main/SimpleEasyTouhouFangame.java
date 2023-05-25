@@ -62,6 +62,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     private boolean doImmutable = false;
     private int enemyNum = 0;
     private int emitter = 1;
+    private double timer;
     private int MoveSpeed = 3;
     public static int RoundEmitterNum = 15;
     public static int level = 2;
@@ -185,6 +186,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         processInput();
         renderFrame();
         emitter++;
+        if(!doGameOver) timer = emitter;
         sleep((long)(40-delta));
         //游戏结束条件--有一方血量为零
         if (player.proportion() <= 0) {
@@ -261,6 +263,8 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         if (( keyboard.keyDown( KeyEvent.VK_LEFT ) || keyboard.keyDown( KeyEvent.VK_A ))  && position.x <= width) {
             position.addX(-MoveSpeed);
         }
+        if (position.x <= 0) position.x = 1;
+        if (position.x >= width) position.x = width;
     }
 
     //圆形发射器，以输入的坐标为原点，等角度生成n个目标
@@ -329,7 +333,9 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         graphics.setFont(font1);
         //计算帧数
         frameRate.calculate();
+        graphics.setColor(Color.ORANGE.WHITE);
         graphics.drawString(frameRate.getFrameRate(),30,30);
+        graphics.drawString(String.format("%.2f",timer / 45) + "s",30,45);
         //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
             Point p = lines.get(i);

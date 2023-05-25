@@ -83,7 +83,7 @@ public class moveThread implements Runnable {
     private void moveTo(double x, double y) {
         double deltaX = SimpleEasyTouhouFangame.cartesian.x - x;
         double deltaY = SimpleEasyTouhouFangame.cartesian.y - y;
-        movement(0,(int)distance(SimpleEasyTouhouFangame.cartesian.x,SimpleEasyTouhouFangame.cartesian.y,320,100),-Math.toDegrees(Math.atan2(deltaY, deltaX)));
+        movement(0,(int)distance(SimpleEasyTouhouFangame.cartesian.x,SimpleEasyTouhouFangame.cartesian.y,320,100),180-Math.toDegrees(Math.atan2(deltaY, deltaX)));
     }
     private void EmitterType1(int num) {
         SimpleEasyTouhouFangame.RoundEmitterRotation = 0.0;
