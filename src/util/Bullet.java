@@ -3,6 +3,7 @@ package util;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static util.gameMath.distance;
 
@@ -19,6 +20,7 @@ public class Bullet {
     public double speed = 4;
     private double BoxRotation;
     private boolean isPause = false;
+    public BufferedImage image;
 
     public Bullet(double x, double y, double OriginX, double OriginY) {
         this.x = x;
@@ -30,7 +32,7 @@ public class Bullet {
         this.radius = distance(x, y, OriginX, OriginY);
         this.theta = Math.toDegrees(Math.atan2(deltaY, deltaX));
     }
-    public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY, double BoxRotation) {
+    public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY, double BoxRotation,BufferedImage image) {
         this.theta = polar.theta;
         this.radius = polar.radius;
         this.OriginX = OriginX;
@@ -38,6 +40,7 @@ public class Bullet {
         this.BoxRotation = BoxRotation;
         this.x = polar.radius * Math.cos(Math.toRadians(polar.theta)) + OriginX;
         this.y = polar.radius * Math.sin(Math.toRadians(polar.theta)) + OriginY;
+        this.image = image;
     }
     public Bullet(@NotNull PolarCoordinate polar, double OriginX, double OriginY) {
         this.theta = polar.theta;
@@ -102,6 +105,7 @@ public class Bullet {
         return lifetime;
     }
     public int getPauseTime() {return pauseTime;}
+    public void setImage(BufferedImage image) {this.image = image;}
     public String toPosition () {
         return "x:" + this.x + ",y:" + this.y;
     }

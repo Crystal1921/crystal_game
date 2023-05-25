@@ -14,8 +14,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Random;
 
+import static java.lang.Math.PI;
+import static util.ImageRotatorExample.rotateImage;
 import static util.gameMath.*;
 import static Thread.MP3PlayerThread.*;
 import static util.StarDrawing.*;
@@ -33,7 +34,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     private Thread backgroundmusic;
     private MP3PlayerThread.MusicThread musicThread = new MP3PlayerThread.MusicThread();
     private moveThread moveThread = new moveThread();
-    private Random random = new Random();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static Cartesian cartesian = new Cartesian(300,100);
@@ -57,12 +57,9 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<Cartesian> enemy = new ArrayList<>();
     private ArrayList<ArrayList<Bullet>> bulletLists = new ArrayList<>();
-    private ArrayList<BufferedImage> rotatedImage = new ArrayList<>();
-    private boolean doColor = true;
     private boolean doGameOver = false;
     private boolean MotionControl = true;
     private boolean doImmutable = false;
-    private int colorIndex;
     private int enemyNum = 0;
     private int emitter = 1;
     private int MoveSpeed = 3;
@@ -148,6 +145,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         setFilename();
         backgroundmusic = new Thread(musicThread);
         backgroundmusic.start();
+        backgroundmusic.suspend();
         move = new Thread(moveThread);
         move.start();
     }
@@ -237,7 +235,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         if ( keyboard.keyDownOnce( KeyEvent.VK_C ) ) {
             lines.clear();
             bulletLists.get(1).clear();
-            rotatedImage.clear();
         }
     }
 
@@ -274,13 +271,12 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             if (emitter % (Reimu.emitterSpeed + (level - 1) * 60 ) == 0) {
                 for (int i = 0; i <= n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
-                    lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90));
                     switch (level){
                         case 1 :
-                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet_1,angle * i + rotation));
+                            lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90,rotateImage(Hakurei_bullet_1,angle * i + rotation)));
                             break;
                         case 2 :
-                            rotatedImage.add(ImageRotatorExample.rotateImage(Hakurei_bullet_4,angle * i + rotation));
+                            lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90,rotateImage(Hakurei_bullet_4,angle * i + rotation)));
                             break;
                     }
                 }
@@ -333,7 +329,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         graphics.setFont(font1);
         //计算帧数
         frameRate.calculate();
-        if (doColor) colorIndex += mouse.getNotches();
         graphics.drawString(frameRate.getFrameRate(),30,30);
         //处理玩家发射的子弹事件
         for (int i = 0; i < lines.size() - 1; ++i) {
@@ -362,23 +357,20 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
             Bullet p = bulletLists.get(1).get(i);
             if ( p != null ) {
-                graphics.drawImage(rotatedImage.get(i),(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
+                graphics.drawImage(p.image,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 if (BoxTest(player_image, p, position.Point()) && !doGameOver && level == 1) {
                     if (!doImmutable) player.addHurt();
                     bulletLists.get(1).remove(i);
-                    rotatedImage.remove(i);
                 }
                 if(distance(p.Point(),position.Point()) <= Hakurei_bullet_4.getWidth() / 2 && level == 2) {
                     if (!doImmutable) player.addHurt();
                     bulletLists.get(1).remove(i);
-                    rotatedImage.remove(i);
                 }
                 p.addRadius(addRadius);
                 p.addTheta(addTheta);
                 p.PolarPosition();
                 if ( isOutWindow(width,height,p) ) {
                     bulletLists.get(1).remove(i);
-                    rotatedImage.remove(i);
                 }
             }
         }
@@ -399,9 +391,20 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                         }   else {
                             bullet1.addPauseTime();
                         }
-                        if (bullet1.getLifeTime() <= 10) {
+                        if (bullet1.getLifeTime() == 1) {
                             double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
                             bullet1.setTheta(deltaTheta);
+                            switch (bullet1.stage) {
+                                case 1 :
+                                    bullet1.setImage(rotateImage(Hakurei_bullet1,deltaTheta + 90));
+                                    break;
+                                case 2 :
+                                    bullet1.setImage(rotateImage(Hakurei_bullet2,deltaTheta + 90));
+                                    break;
+                                case 3 :
+                                    bullet1.setImage(rotateImage(Hakurei_bullet3,deltaTheta + 90));
+                                    break;
+                            }
                         }
                         if (bullet1.getPauseTime() >= 50) {
                             bullet1.pause();
@@ -412,27 +415,17 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                             bullet1.addStage();
                             bullet1.pause();
                             bullet1.addSpeed();
+                            switch (bullet1.stage) {
+                                case 1 :
+                                    bullet1.setImage(Hakurei_bullet_2);
+                                    break;
+                                case 2:
+                                    bullet1.setImage(Hakurei_bullet_3);
+                                    break;
+                            }
                         }
+                        graphics.drawImage(bullet1.image,(int)bullet1.getX(),(int)bullet1.getY(),this);
                         if (bullet1.isContinue()) bullet1.setLocation(bullet1.getX() - Math.cos(Math.toRadians(bullet1.getTheta())) * bullet1.speed,bullet1.getY() - Math.sin(Math.toRadians(bullet1.getTheta())) * bullet1.speed);
-                        switch (bullet1.stage) {
-                            case 1 :
-                                if (bullet1.isContinue()) {
-                                    graphics.drawImage(Hakurei_bullet1,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                                }   else {
-                                    graphics.drawImage(Hakurei_bullet_2,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                                }
-                                break;
-                            case 2 :
-                                if (bullet1.isContinue()) {
-                                    graphics.drawImage(Hakurei_bullet2,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                                }   else {
-                                    graphics.drawImage(Hakurei_bullet_3,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                                }
-                                break;
-                            case 3 :
-                                graphics.drawImage(Hakurei_bullet3,(int)bullet1.getX(),(int)bullet1.getY(),this);
-                                break;
-                        }
                         if (BoxTest(player_image, bullet1, position.Point()) && !doGameOver) {
                             if (!doImmutable) player.addHurt();
                             bulletLists.get(2).remove(i);
@@ -453,7 +446,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                     yinyangyu.RoundPosition(i * 60 + emitter * 4);
                     if (emitter % yinyangyu.emitterSpeed == 0 && !doGameOver) {
                         PolarCoordinate polar1 = new PolarCoordinate(60 * i + emitter * 4, 60);
-                        bulletLists.get(2).add(new Bullet(polar1, cartesian.x, cartesian.y,i));
+                        bulletLists.get(2).add(new Bullet(polar1, cartesian.x, cartesian.y));
                         bulletLists.get(2).add(new Bullet(polar1.addRadius(20), cartesian.x , cartesian.y));
                     }
                     graphics.drawImage(yin_yang_yu, (int) yinyangyu.x - yin_yang_yu.getWidth() / 2, (int) yinyangyu.y - yin_yang_yu.getHeight() / 2, this);
