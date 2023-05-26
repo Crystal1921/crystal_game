@@ -24,7 +24,7 @@ import Thread.MP3PlayerThread;
 import Thread.moveThread;
 
 @SuppressWarnings("ALL")
-public class SimpleEasyTouhouFangame extends JFrame implements Runnable, HyperlinkListener {
+public class SimpleEasyTouhouFangame extends JFrame implements Runnable, HyperlinkListener, MouseListener {
 
     private FrameRate frameRate;
     private BufferStrategy bs;
@@ -109,6 +109,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         editorPane1.add(button2);
         //面版属性控制
         Canvas canvas = new Canvas();
+        canvas.addMouseListener(this);
         canvas.setSize(width,height);
         canvas.setBackground(Color.BLACK);
         canvas.setIgnoreRepaint(true);
@@ -132,11 +133,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         gameThread = new Thread(this);
         gameThread.start();
         setFilename();
-        backgroundmusic = new Thread(musicThread);
-        backgroundmusic.start();
-        backgroundmusic.suspend();
-        move = new Thread(moveThread);
-        move.start();
     }
 
     @Override
@@ -212,10 +208,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         }
         else {
             KeyboardControl();
-        }
-        //切换键盘控制和鼠标控制
-        if ( keyboard.keyDownOnce( KeyEvent.VK_Q ) ) {
-            MotionControl = !MotionControl;
         }
         //真-作弊码 无敌
         if ( keyboard.keyDownOnce( KeyEvent.VK_F ) ) {
@@ -333,7 +325,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             Point p = lines.get(i);
             if ( p != null) {
                 graphics.drawImage(bullet,(int)p.getX() - bullet.getHeight() / 2,(int)p.getY() - bullet.getWidth() / 2,this);
-                p.setLocation(p.getX(),p.getY() - 6);
+                p.setLocation(p.getX(),p.getY() - 8);
                 if (BoxTest(Hakurei_Reimu, p, cartesian) && !doGameOver) {
                     Reimu.addHurt();
                     lines.remove(i);
@@ -466,9 +458,9 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         graphics.fillRoundRect(260,35,(int)Math.floor(180 * Reimu.proportion()),20,5,5);
         //绘制玩家的血量条
         graphics.setColor(Color.ORANGE);
-        graphics.drawString(String.format("%.1f%%",(player.proportion() * 100)),400,455);
-        graphics.drawRoundRect(250,400,200,30,5,5);
-        graphics.fillRoundRect(260,405,(int)Math.floor(180 * player.proportion()),20,5,5);
+        graphics.drawString(String.format("%.1f%%",(player.proportion() * 100)),450,455);
+        graphics.drawRoundRect(250,450,200,30,5,5);
+        graphics.fillRoundRect(260,455,(int)Math.floor(180 * player.proportion()),20,5,5);
         graphics.setFont(font2);
         //结束后
         if (Reimu.proportion() <= 0 && level == 2) {
@@ -486,22 +478,23 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         graphics.drawImage(background,0,0,this);
         graphics.drawImage(Minecraft_1,122,100,this);
         graphics.drawImage(Minecraft_2,122,160,this);
-        if (PositionTest(Minecraft_3,122,220,position)) {
+        if (PositionTest(Minecraft_3,122,220,position) || MotionControl == false) {
             graphics.drawImage(Minecraft_3_2,122,220,this);
         }   else {
             graphics.drawImage(Minecraft_3,122,220,this);
         }
-        if (PositionTest(Minecraft_4,326,220,position)) {
+        if (PositionTest(Minecraft_4,326,220,position) || MotionControl == true) {
             graphics.drawImage(Minecraft_4_2,326,220,this);
         }   else {
             graphics.drawImage(Minecraft_4,326,220,this);
         }
+        graphics.drawImage(Minecraft_5,122,280,this);
+        graphics.drawImage(Minecraft_6,326,280,this);
         graphics.setFont(font1);
         //计算帧数
         frameRate.calculate();
         graphics.setColor(Color.WHITE);
         graphics.drawString(frameRate.getFrameRate(),30,30);
-
     }
 
     protected void onWindowClosing() {
@@ -524,5 +517,52 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             }
         });
         SwingUtilities.invokeLater(app::createAndShowGUI);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Cartesian position = new Cartesian(e.getX(),e.getY());
+        if (PositionTest(Minecraft_1,122,100,position)) {
+            doGameStart = true;
+            backgroundmusic = new Thread(musicThread);
+            backgroundmusic.start();
+            move = new Thread(moveThread);
+            move.start();
+        }
+        if (PositionTest(Minecraft_2,122,160,position)) {
+            System.out.println("没做呢，别看");
+        }
+        if (PositionTest(Minecraft_3,122,220,position)) {
+            MotionControl = false;
+        }
+        if (PositionTest(Minecraft_4,326,220,position)) {
+            MotionControl = true;
+        }
+        if (PositionTest(Minecraft_5,122,280,position)) {
+            level = 1;
+        }
+        if (PositionTest(Minecraft_6,326,280,position)) {
+            level = 2;
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

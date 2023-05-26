@@ -37,7 +37,7 @@ public class MP3PlayerThread {
         public void run() {
             isPlaying = true;
             try {
-                InputStream is = MP3PlayerThread.class.getClassLoader().getResourceAsStream("sound/Eternal_Night.mp3");
+                InputStream is = MP3PlayerThread.class.getClassLoader().getResourceAsStream("sound/Dance of the Crazed Saku.mp3");
                 if (is != null) {
                     player = new AdvancedPlayer(is, FactoryRegistry.systemRegistry().createAudioDevice());
                 }

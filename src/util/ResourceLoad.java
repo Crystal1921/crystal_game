@@ -22,12 +22,14 @@ public class ResourceLoad {
     final public static BufferedImage Hakurei_bullet_4;
     final public static BufferedImage Hakurei_Reimu;
     final public static Image background;
-    final public static Image Minecraft_1;
-    final public static Image Minecraft_2;
+    final public static BufferedImage Minecraft_1;
+    final public static BufferedImage Minecraft_2;
     final public static BufferedImage Minecraft_3;
     final public static BufferedImage Minecraft_3_2;
     final public static BufferedImage Minecraft_4;
     final public static BufferedImage Minecraft_4_2;
+    final public static BufferedImage Minecraft_5;
+    final public static BufferedImage Minecraft_6;
 
     static {
         try {
@@ -50,6 +52,8 @@ public class ResourceLoad {
             Minecraft_3_2 = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Minecraft_image_3_2.png")));
             Minecraft_4 = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Minecraft_image_4.png")));
             Minecraft_4_2 = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Minecraft_image_4_2.png")));
+            Minecraft_5 = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Minecraft_image_5.png")));
+            Minecraft_6 = ImageIO.read(Objects.requireNonNull(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Minecraft_image_6.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
