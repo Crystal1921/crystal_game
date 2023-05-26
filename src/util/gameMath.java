@@ -29,4 +29,7 @@ public class gameMath {
     public static boolean BoxTest(@NotNull BufferedImage image, @NotNull Bullet bullet, @NotNull Point player) {
         return bullet.getX() >= (player.x - image.getWidth() / 2.0) && bullet.getX() <= (player.x + image.getWidth() / 2.0) && bullet.getY() >= (player.y - image.getHeight() / 2.0) && bullet.getY() <= (player.y + image.getHeight() / 2.0);
     }
+    public static boolean PositionTest(@NotNull BufferedImage image, int x, int y ,Cartesian position) {
+        return position.x >= x && position.y >= y && position.x <= (x + image.getWidth()) && position.y <= (y + image.getHeight());
+    }
 }

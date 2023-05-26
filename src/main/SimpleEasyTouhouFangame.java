@@ -15,8 +15,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import static java.lang.Math.PI;
 import static util.ImageRotatorExample.rotateImage;
+import static util.ResourceLoad.*;
 import static util.gameMath.*;
 import static Thread.MP3PlayerThread.*;
 import static util.StarDrawing.*;
@@ -37,26 +37,14 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static Cartesian cartesian = new Cartesian(300,100);
-    final BufferedImage player_image = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/crystal_small.png"));
-    final BufferedImage yin_yang_yu = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/yin_yang_yu.png"));
-    final BufferedImage bullet = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/bullet.png"));
-    final BufferedImage bullet2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/bullet2.png"));
-    final BufferedImage Hakurei_bullet1 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet1.png"));
-    final BufferedImage Hakurei_bullet2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet2.png"));
-    final BufferedImage Hakurei_bullet3 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet3.png"));
-    final BufferedImage Hakurei_bullet_1 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_1.png"));
-    final BufferedImage Hakurei_bullet_2 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_2.png"));
-    final BufferedImage Hakurei_bullet_3 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_3.png"));
-    final BufferedImage Hakurei_bullet_4 = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_bullet_4.png"));
-    final BufferedImage Hakurei_Reimu = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/Hakurei_Reimu_big.png"));
-    final BufferedImage background = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/background.png"));
-    final Image icon = ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/happy.png"));
+    final private BufferedImage icon =ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/happy.png"));
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     final Font font2 = new Font("微软雅黑", Font.BOLD,24);
     private ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
     private ArrayList<Point> lines = new ArrayList<>();
     private ArrayList<Cartesian> enemy = new ArrayList<>();
     private ArrayList<ArrayList<Bullet>> bulletLists = new ArrayList<>();
+    private boolean doGameStart = false;
     private boolean doGameOver = false;
     private boolean MotionControl = true;
     private boolean doImmutable = false;
@@ -185,7 +173,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         }
         processInput();
         renderFrame();
-        emitter++;
+        if(doGameStart) emitter++;
         if(!doGameOver) timer = emitter;
         sleep((long)(40-delta));
         //游戏结束条件--有一方血量为零
@@ -317,7 +305,11 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                 try {
                     graphics =(Graphics2D) bs.getDrawGraphics();
                     graphics.clearRect(0,0,getWidth(),getHeight());
-                    render(graphics);
+                    if (doGameStart) {
+                        GameRender(graphics);
+                    } else {
+                        StartRender(graphics);
+                    }
                 } finally {
                     if (graphics != null) {
                         graphics.dispose();
@@ -328,12 +320,12 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         } while (bs.contentsLost());
     }
 
-    private void render(@NotNull Graphics2D graphics) {
+    private void GameRender(@NotNull Graphics2D graphics) {
         graphics.drawImage(background,0,0,this);
         graphics.setFont(font1);
         //计算帧数
         frameRate.calculate();
-        graphics.setColor(Color.ORANGE.WHITE);
+        graphics.setColor(Color.WHITE);
         graphics.drawString(frameRate.getFrameRate(),30,30);
         graphics.drawString(String.format("%.2f",timer / 45) + "s",30,45);
         //处理玩家发射的子弹事件
@@ -489,6 +481,27 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         }
         graphics.drawImage(player_image,(int)position.x - player_image.getHeight() / 2,(int)position.y - player_image.getWidth() / 2,this);
         graphics.drawImage(Hakurei_Reimu,(int)cartesian.x - Hakurei_Reimu.getHeight() / 2,(int)cartesian.y - Hakurei_Reimu.getHeight() / 2,this);
+    }
+    private void StartRender (Graphics2D graphics) {
+        graphics.drawImage(background,0,0,this);
+        graphics.drawImage(Minecraft_1,122,100,this);
+        graphics.drawImage(Minecraft_2,122,160,this);
+        if (PositionTest(Minecraft_3,122,220,position)) {
+            graphics.drawImage(Minecraft_3_2,122,220,this);
+        }   else {
+            graphics.drawImage(Minecraft_3,122,220,this);
+        }
+        if (PositionTest(Minecraft_4,326,220,position)) {
+            graphics.drawImage(Minecraft_4_2,326,220,this);
+        }   else {
+            graphics.drawImage(Minecraft_4,326,220,this);
+        }
+        graphics.setFont(font1);
+        //计算帧数
+        frameRate.calculate();
+        graphics.setColor(Color.WHITE);
+        graphics.drawString(frameRate.getFrameRate(),30,30);
+
     }
 
     protected void onWindowClosing() {
