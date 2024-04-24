@@ -6,7 +6,7 @@
 package Thread;
 
 import java.util.Random;
-import main.SimpleEasyTouhouFangame;
+import main.SimpleEasyTouhouFanGame;
 
 import static util.gameMath.distance;
 
@@ -57,43 +57,41 @@ public class moveThread implements Runnable {
 
     private void movement(int sleepDuration, int distance, double theta) {
         this.sleep(sleepDuration);
-        int emitterNum = SimpleEasyTouhouFangame.RoundEmitterNum;
-        SimpleEasyTouhouFangame.RoundEmitterNum = 0;
+        int emitterNum = SimpleEasyTouhouFanGame.RoundEmitterNum;
+        SimpleEasyTouhouFanGame.RoundEmitterNum = 0;
 
         for(double i = 0.0; i < (double)distance; ++i) {
-            SimpleEasyTouhouFangame.cartesian.addX(Math.cos(Math.toRadians(theta)));
-            SimpleEasyTouhouFangame.cartesian.addY(Math.sin(Math.toRadians(theta)));
+            SimpleEasyTouhouFanGame.cartesian.addX(Math.cos(Math.toRadians(theta)));
+            SimpleEasyTouhouFanGame.cartesian.addY(Math.sin(Math.toRadians(theta)));
             this.sleep(10L);
         }
 
-        SimpleEasyTouhouFangame.RoundEmitterNum = emitterNum;
+        SimpleEasyTouhouFanGame.RoundEmitterNum = emitterNum;
     }
 
     private void moveAttack(int sleepDuration, int distance, double theta) {
         this.sleep(sleepDuration);
 
         for(double i = 0.0; i < (double)distance; ++i) {
-            SimpleEasyTouhouFangame.cartesian.addX(Math.cos(Math.toRadians(theta)));
-            SimpleEasyTouhouFangame.cartesian.addY(Math.sin(Math.toRadians(theta)));
+            SimpleEasyTouhouFanGame.cartesian.addX(Math.cos(Math.toRadians(theta)));
+            SimpleEasyTouhouFanGame.cartesian.addY(Math.sin(Math.toRadians(theta)));
             this.sleep(10L);
         }
 
     }
 
     private void moveTo(double x, double y) {
-        double deltaX = SimpleEasyTouhouFangame.cartesian.x - x;
-        double deltaY = SimpleEasyTouhouFangame.cartesian.y - y;
-        movement(0,(int)distance(SimpleEasyTouhouFangame.cartesian.x,SimpleEasyTouhouFangame.cartesian.y,320,100),180-Math.toDegrees(Math.atan2(deltaY, deltaX)));
+        double deltaX = SimpleEasyTouhouFanGame.cartesian.x - x;
+        double deltaY = SimpleEasyTouhouFanGame.cartesian.y - y;
+        movement(0,(int)distance(SimpleEasyTouhouFanGame.cartesian.x, SimpleEasyTouhouFanGame.cartesian.y,320,100),180-Math.toDegrees(Math.atan2(deltaY, deltaX)));
     }
     private void EmitterType1(int num) {
-        SimpleEasyTouhouFangame.RoundEmitterRotation = 0.0;
-        SimpleEasyTouhouFangame.addTheta = 0.5;
-        SimpleEasyTouhouFangame.RoundEmitterNum = num;
+        SimpleEasyTouhouFanGame.addTheta = 0.5;
+        SimpleEasyTouhouFanGame.RoundEmitterNum = num;
     }
 
     private void EmitterType2(double rotation, double theta, int num) {
-        SimpleEasyTouhouFangame.RoundEmitterRotation = rotation;
-        SimpleEasyTouhouFangame.addTheta = theta;
-        SimpleEasyTouhouFangame.RoundEmitterNum = num;
+        SimpleEasyTouhouFanGame.addTheta = theta;
+        SimpleEasyTouhouFanGame.RoundEmitterNum = num;
     }
 }

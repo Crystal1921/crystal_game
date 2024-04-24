@@ -6,8 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyboardInput implements KeyListener {
-    private boolean[] keys;
-    private int[] polled;
+    private final boolean[] keys;
+    private final int[] polled;
     public KeyboardInput() {
         keys = new boolean[ 256 ];
         polled = new int[ 256 ];

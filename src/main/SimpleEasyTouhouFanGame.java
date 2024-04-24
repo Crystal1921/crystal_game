@@ -23,27 +23,26 @@ import static util.StarDrawing.*;
 import Thread.MP3PlayerThread;
 import Thread.moveThread;
 
-@SuppressWarnings("ALL")
-public class SimpleEasyTouhouFangame extends JFrame implements Runnable, HyperlinkListener, MouseListener {
+public class SimpleEasyTouhouFanGame extends JFrame implements Runnable, HyperlinkListener, MouseListener {
 
-    private FrameRate frameRate;
+    private final FrameRate frameRate;
     private BufferStrategy bs;
     private volatile boolean running;
     private Thread gameThread;
     private Thread move;
-    private Thread backgroundmusic;
-    private MP3PlayerThread.MusicThread musicThread = new MP3PlayerThread.MusicThread();
-    private moveThread moveThread = new moveThread();
+    private Thread backgroundMusic;
+    private final MP3PlayerThread.MusicThread musicThread = new MP3PlayerThread.MusicThread();
+    private final moveThread moveThread = new moveThread();
     private SimpleMouseInput mouse;
     private KeyboardInput keyboard;
     public static Cartesian cartesian = new Cartesian(300,100);
-    final private BufferedImage icon =ImageIO.read(SimpleEasyTouhouFangame.class.getClassLoader().getResourceAsStream("image/happy.png"));
+    final private BufferedImage icon =ImageIO.read(SimpleEasyTouhouFanGame.class.getClassLoader().getResourceAsStream("image/happy.png"));
     final Font font1 = new Font("微软雅黑", Font.PLAIN,12);
     final Font font2 = new Font("微软雅黑", Font.BOLD,24);
-    private ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
-    private ArrayList<Point> lines = new ArrayList<>();
-    private ArrayList<Cartesian> enemy = new ArrayList<>();
-    private ArrayList<ArrayList<Bullet>> bulletLists = new ArrayList<>();
+    private final ArrayList<OnmyouDama> YinYangYu = new ArrayList<>();
+    private final ArrayList<Point> lines = new ArrayList<>();
+    private final ArrayList<Cartesian> enemy = new ArrayList<>();
+    private final ArrayList<ArrayList<Bullet>> bulletLists = new ArrayList<>();
     private boolean doGameStart = false;
     private boolean doGameOver = false;
     private boolean MotionControl = true;
@@ -56,23 +55,23 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     public static int level = 2;
     final private int width = 640;
     final private int height = 480;
-    private entity Reimu = new entity(100,6);
-    private entity player = new entity(50,6,new Cartesian(320,300));
-    private Cartesian position = player.getPosition();
+    private final entity Reimu = new entity(100,6);
+    private final entity player = new entity(50,6,new Cartesian(320,300));
+    private final Cartesian position = player.getPosition();
     public static double RoundEmitterRotation = 1;
     public static double addRadius = 4;
     public static double addTheta = 0.5;
     private double rotation;
 
-    public SimpleEasyTouhouFangame() throws IOException {
+    public SimpleEasyTouhouFanGame() throws IOException {
         frameRate = new FrameRate();
     }
     protected void createAndShowGUI() {
         for (int i = 0; i < 10; i++) {
-            bulletLists.add(new ArrayList<Bullet>());
+            bulletLists.add(new ArrayList<>());
         }
-        BufferedImage Starimage = dotImage(dotImageGenerate(23,75,5,20));
-        ImageEmitter(Starimage,bulletLists.get(3));
+        BufferedImage starImage = dotImage(dotImageGenerate(23,75,5,20));
+        ImageEmitter(starImage,bulletLists.get(3));
         for (int i = 0; i < 6; i++) {
             YinYangYu.add(new OnmyouDama(5,70));
         }
@@ -89,18 +88,20 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         //新建bgm控制按钮
         JButton button1 = new JButton("bgm on");
         button1.addActionListener(new ActionListener() {
+            @SuppressWarnings("all")
             public void actionPerformed(ActionEvent e) {
                 if (!isPlaying) {
-                    backgroundmusic.resume();
+                    backgroundMusic.resume();
                     isPlaying = !isPlaying;
                 }
             }
         });
         JButton button2 = new JButton("bgm off");
         button2.addActionListener(new ActionListener() {
+            @SuppressWarnings("all")
             public void actionPerformed(ActionEvent e) {
                 if (isPlaying) {
-                    backgroundmusic.suspend();
+                    backgroundMusic.suspend();
                     isPlaying = !isPlaying;
                 }
             }
@@ -132,7 +133,6 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         //新建线程，开始游戏
         gameThread = new Thread(this);
         gameThread.start();
-        setFilename();
     }
 
     @Override
@@ -144,7 +144,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         frameRate.initialize();
         while (running) {
             curTime = System.nanoTime();
-            msPerFrame = (curTime - lastTime) / 1000000;
+            msPerFrame = (double) (curTime - lastTime) / 1000000;
             gameLoop( msPerFrame );//input ms
             lastTime = curTime;
         }
@@ -166,6 +166,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             level = 2;
             Reimu.hurt = 0;
             player.hurt = 0;
+            move.start();
         }
         processInput();
         renderFrame();
@@ -255,13 +256,11 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             if (emitter % (Reimu.emitterSpeed + (level - 1) * 60 ) == 0) {
                 for (int i = 0; i <= n; i++) {
                     PolarCoordinate polar1 = new PolarCoordinate(angle * i + rotation + 90, 15);
-                    switch (level){
-                        case 1 :
-                            lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90,rotateImage(Hakurei_bullet_1,angle * i + rotation)));
-                            break;
-                        case 2 :
-                            lines.add(new Bullet(polar1,cartesian.x,cartesian.y,angle * i + rotation + 90,rotateImage(Hakurei_bullet_4,angle * i + rotation)));
-                            break;
+                    switch (level) {
+                        case 1 ->
+                                lines.add(new Bullet(polar1, cartesian.x, cartesian.y, angle * i + rotation + 90, rotateImage(Hakurei_bullet_1, angle * i + rotation)));
+                        case 2 ->
+                                lines.add(new Bullet(polar1, cartesian.x, cartesian.y, angle * i + rotation + 90, rotateImage(Hakurei_bullet_4, angle * i + rotation)));
                     }
                 }
             }
@@ -275,7 +274,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                 int rgb = image.getRGB(x, y);
                 Color color = new Color(rgb);
                 if (color.getRed() == 255 && color.getGreen() == 255 && color.getBlue() == 255) {
-                    lines.add(new Bullet(x - width / 2 + cartesian.x,y - height / 2 + cartesian.y,cartesian.x,cartesian.y));
+                    lines.add(new Bullet(x - (double) width / 2 + cartesian.x,y - (double) height / 2 + cartesian.y,cartesian.x,cartesian.y));
                 }
             }
         }
@@ -342,6 +341,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             }
         }
         //处理灵梦发射的子弹事件
+        RoundEmitterRotation+=0.02;
         if (!doGameOver && level == 1) RoundEmitter(RoundEmitterNum,RoundEmitterRotation,bulletLists.get(1));
         if (!doGameOver && level == 2) RoundEmitter(30,0,bulletLists.get(1));
         for (int i = 0; i < bulletLists.get(1).size() - 1 ; i++) {
@@ -349,7 +349,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
             if ( p != null ) {
                 graphics.drawImage(p.image,(int)p.getX() - bullet2.getHeight() / 2,(int)p.getY() - bullet2.getWidth() / 2,this);
                 if (BoxTest(player_image, p, position.Point()) && !doGameOver && level == 1) {
-                    if (!doImmutable) player.addHurt();
+                    if (!doImmutable) player.addHurt(3);
                     bulletLists.get(1).remove(i);
                 }
                 if(distance(p.Point(),position.Point()) <= Hakurei_bullet_4.getWidth() / 2 && level == 2) {
@@ -385,15 +385,9 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                             double deltaTheta = Math.toDegrees(Math.atan2(bullet1.getY() - position.y, bullet1.getX() - position.x));
                             bullet1.setTheta(deltaTheta);
                             switch (bullet1.stage) {
-                                case 1 :
-                                    bullet1.setImage(rotateImage(Hakurei_bullet1,deltaTheta + 90));
-                                    break;
-                                case 2 :
-                                    bullet1.setImage(rotateImage(Hakurei_bullet2,deltaTheta + 90));
-                                    break;
-                                case 3 :
-                                    bullet1.setImage(rotateImage(Hakurei_bullet3,deltaTheta + 90));
-                                    break;
+                                case 1 -> bullet1.setImage(rotateImage(Hakurei_bullet1, deltaTheta + 90));
+                                case 2 -> bullet1.setImage(rotateImage(Hakurei_bullet2, deltaTheta + 90));
+                                case 3 -> bullet1.setImage(rotateImage(Hakurei_bullet3, deltaTheta + 90));
                             }
                         }
                         if (bullet1.getPauseTime() >= 50) {
@@ -406,12 +400,8 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
                             bullet1.pause();
                             bullet1.addSpeed();
                             switch (bullet1.stage) {
-                                case 1 :
-                                    bullet1.setImage(Hakurei_bullet_2);
-                                    break;
-                                case 2:
-                                    bullet1.setImage(Hakurei_bullet_3);
-                                    break;
+                                case 1 -> bullet1.setImage(Hakurei_bullet_2);
+                                case 2 -> bullet1.setImage(Hakurei_bullet_3);
                             }
                         }
                         graphics.drawImage(bullet1.image,(int)bullet1.getX(),(int)bullet1.getY(),this);
@@ -478,12 +468,12 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
         graphics.drawImage(background,0,0,this);
         graphics.drawImage(Minecraft_1,122,100,this);
         graphics.drawImage(Minecraft_2,122,160,this);
-        if (PositionTest(Minecraft_3,122,220,position) || MotionControl == false) {
+        if (PositionTest(Minecraft_3,122,220,position) || !MotionControl) {
             graphics.drawImage(Minecraft_3_2,122,220,this);
         }   else {
             graphics.drawImage(Minecraft_3,122,220,this);
         }
-        if (PositionTest(Minecraft_4,326,220,position) || MotionControl == true) {
+        if (PositionTest(Minecraft_4,326,220,position) || MotionControl) {
             graphics.drawImage(Minecraft_4_2,326,220,this);
         }   else {
             graphics.drawImage(Minecraft_4,326,220,this);
@@ -508,7 +498,7 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     }
 
     public static void main(String[] args) throws IOException {
-        final SimpleEasyTouhouFangame app = new SimpleEasyTouhouFangame();
+        final SimpleEasyTouhouFanGame app = new SimpleEasyTouhouFanGame();
         app.setIconImage(app.icon);
         app.addWindowListener(new WindowAdapter() {
             @Override
@@ -522,27 +512,29 @@ public class SimpleEasyTouhouFangame extends JFrame implements Runnable, Hyperli
     @Override
     public void mouseClicked(MouseEvent e) {
         Cartesian position = new Cartesian(e.getX(),e.getY());
-        if (PositionTest(Minecraft_1,122,100,position)) {
-            doGameStart = true;
-            backgroundmusic = new Thread(musicThread);
-            backgroundmusic.start();
-            move = new Thread(moveThread);
-            move.start();
-        }
-        if (PositionTest(Minecraft_2,122,160,position)) {
-            System.out.println("没做呢，别看");
-        }
-        if (PositionTest(Minecraft_3,122,220,position)) {
-            MotionControl = false;
-        }
-        if (PositionTest(Minecraft_4,326,220,position)) {
-            MotionControl = true;
-        }
-        if (PositionTest(Minecraft_5,122,280,position)) {
-            level = 1;
-        }
-        if (PositionTest(Minecraft_6,326,280,position)) {
-            level = 2;
+        if (!doGameStart) {
+            if (PositionTest(Minecraft_1,122,100,position)) {
+                doGameStart = true;
+                backgroundMusic = new Thread(musicThread);
+                backgroundMusic.start();
+                move = new Thread(moveThread);
+                if (level == 2) move.start();
+            }
+            if (PositionTest(Minecraft_2,122,160,position)) {
+                System.out.println("没做呢，别看");
+            }
+            if (PositionTest(Minecraft_3,122,220,position)) {
+                MotionControl = false;
+            }
+            if (PositionTest(Minecraft_4,326,220,position)) {
+                MotionControl = true;
+            }
+            if (PositionTest(Minecraft_5,122,280,position)) {
+                level = 1;
+            }
+            if (PositionTest(Minecraft_6,326,280,position)) {
+                level = 2;
+            }
         }
     }
 

@@ -4,9 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 
 public class StarTest extends JPanel {
-    private static final int NUM_POINTS = 10;
+    private static final int NUM_POINTS = 5;
     private static final int RADIUS = 50;
-    private static final int INNER_RADIUS = 25;
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -17,13 +16,10 @@ public class StarTest extends JPanel {
         double angle = Math.PI / 2.0;
         double deltaAngle = 4.0 * Math.PI / NUM_POINTS;
         for (int i = 0; i < NUM_POINTS * 2; i++) {
-            int radius = (i % 2 == 0) ? RADIUS : INNER_RADIUS;
-            xPoints[i] = (int) (centerX + radius * Math.cos(angle));
-            yPoints[i] = (int) (centerY - radius * Math.sin(angle));
+            xPoints[i] = (int) (centerX + RADIUS * Math.cos(angle));
+            yPoints[i] = (int) (centerY - RADIUS * Math.sin(angle));
             angle += deltaAngle;
         }
-        g.setColor(Color.RED);
-        g.fillPolygon(xPoints, yPoints, NUM_POINTS * 2);
         g.setColor(Color.BLACK);
         g.drawPolygon(xPoints, yPoints, NUM_POINTS * 2);
     }

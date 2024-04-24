@@ -10,7 +10,7 @@ public class RenderThreadExample extends JFrame implements Runnable {
     public RenderThreadExample (){
     }
 
-    protected void  creadAndShowGUI() {
+    protected void createAndShowGUI() {
         setSize(320,240);
         setTitle("Render Example");
         setVisible( true );
@@ -54,11 +54,6 @@ public class RenderThreadExample extends JFrame implements Runnable {
                 render.onWindowClosing();
             }
         });
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                render.creadAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(render::createAndShowGUI);
     }
 }

@@ -17,6 +17,9 @@ public class entity {
     public void addHurt () {
         hurt ++;
     }
+    public void addHurt(int n) {
+        hurt += n;
+    }
     public Cartesian getPosition () {return position;}
     public double proportion () {
         return 1 - this.hurt / this.health;
